@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#0a0f1e] text-white font-sans antialiased overflow-x-hidden;
+    /* Subtle background grid pattern for modern AI feel */
+    background-image: 
+      linear-gradient(to right, rgba(31, 45, 71, 0.1) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(31, 45, 71, 0.1) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-[#0a0f1e];
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-[#1f2d47] rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-[#00d4ff]/50;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-[#121b2d]/70 backdrop-blur-md border border-[#1f2d47] rounded-2xl shadow-glass;
+  }
+  
+  .glass-button {
+    @apply bg-[#1f2d47]/50 backdrop-blur-sm border border-[#00d4ff]/30 text-white hover:bg-[#00d4ff]/10 hover:border-[#00d4ff] hover:shadow-glow-accent transition-all duration-300;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#00d4ff] to-blue-500;
+  }
+}
