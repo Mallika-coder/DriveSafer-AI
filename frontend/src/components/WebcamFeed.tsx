@@ -1,9 +1,9 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { useFaceMesh } from '../hooks/useFaceMesh';
 import { useObjectDetect } from '../hooks/useObjectDetect';
 import { calculateEAR } from '../utils/earCalculator';
 import { calculateMAR } from '../utils/marCalculator';
-import { Results } from '@mediapipe/face_mesh';
+import type { Results } from '@mediapipe/face_mesh';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 
 interface WebcamFeedProps {
@@ -43,7 +43,7 @@ export default function WebcamFeed({ onStatsUpdate }: WebcamFeedProps) {
     ctx.restore();
   };
 
-  const onObjectResults = (predictions: cocoSsd.ObjectDetection[]) => {
+  const onObjectResults = (predictions: cocoSsd.DetectedObject[]) => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');

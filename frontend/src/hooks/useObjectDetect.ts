@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import * as cocoSsd from '@tensorflow-models/coco-ssd';
 import '@tensorflow/tfjs';
 
-export function useObjectDetect(videoRef: React.RefObject<HTMLVideoElement>, onDetect: (predictions: cocoSsd.ObjectDetection[]) => void) {
+export function useObjectDetect(videoRef: React.RefObject<HTMLVideoElement>, onDetect: (predictions: cocoSsd.DetectedObject[]) => void) {
   const modelRef = useRef<cocoSsd.ObjectDetection | null>(null);
   const requestRef = useRef<number>();
   const frameCount = useRef(0);

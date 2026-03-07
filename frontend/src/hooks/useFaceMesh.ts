@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { FaceMesh, Results } from '@mediapipe/face_mesh';
+import { FaceMesh, type Results } from '@mediapipe/face_mesh';
 
 export function useFaceMesh(videoRef: React.RefObject<HTMLVideoElement>, onResults: (results: Results) => void) {
   const faceMeshRef = useRef<FaceMesh | null>(null);

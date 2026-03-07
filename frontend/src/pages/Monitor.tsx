@@ -4,7 +4,7 @@ import AlertBanner from '../components/AlertBanner';
 import SettingsModal from '../components/SettingsModal';
 import { useAlertSound } from '../hooks/useAlertSound';
 import axios from 'axios';
-import { Settings, ShieldAlert, Activity, Eye, Smartphone } from 'lucide-react';
+import { Settings, ShieldAlert, Activity, Eye, Smartphone, Zap } from 'lucide-react';
 
 export default function Monitor() {
   const [ear, setEar] = useState(0);
@@ -88,7 +88,7 @@ export default function Monitor() {
   };
 
   return (
-    <div className="flex flex-col h-full animate-fade-in relative max-w-7xl mx-auto w-full">
+    <div className="flex flex-col h-full animate-fade-in relative w-full pb-8">
       <AlertBanner level={alertLevel} message={alertMsg} />
       <SettingsModal 
         isOpen={isSettingsOpen} 
@@ -97,129 +97,195 @@ export default function Monitor() {
         marThresh={marThresh} setMarThresh={setMarThresh}
       />
       
-      <div className="flex justify-between items-center mb-6">
+      <div 
+        className="flex justify-between items-center mb-10 bg-[#111927] p-12 rounded-[2.5rem] border-2 border-white/10 shadow-3xl"
+        style={{ backgroundColor: '#111927', padding: '48px', borderRadius: '40px', border: '2px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}
+      >
         <div>
-          <h1 className="text-3xl font-orbitron font-bold">Live <span className="text-gradient">Telemetry</span></h1>
-          <p className="text-gray-400 mt-1 flex items-center gap-2">
-            <Activity size={16} className="text-accent animate-pulse" /> AI Analysis Active
+          <h1 
+            className="text-6xl font-orbitron font-black tracking-tighter uppercase text-white"
+            style={{ fontSize: '3.75rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', margin: 0, textTransform: 'uppercase' }}
+          >
+            Live <span className="text-gradient" style={{ background: 'linear-gradient(to right, #00F0FF, #7000FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Telemetry</span>
+          </h1>
+          <p 
+            className="mt-3 flex items-center gap-4 font-black text-2xl uppercase tracking-widest leading-none"
+            style={{ fontSize: '1.5rem', fontWeight: 900, color: '#E5E7EB', display: 'flex', alignItems: 'center', gap: '16px', textTransform: 'uppercase', letterSpacing: '0.1em', marginTop: '12px' }}
+          >
+            <Activity size={32} style={{ color: '#FF007F' }} /> Neural Bridge Active
           </p>
         </div>
         
         <button 
           onClick={() => setIsSettingsOpen(true)}
-          className="glass-button flex items-center gap-2 px-4 py-2 rounded-xl text-sm"
+          className="hover:bg-white flex items-center gap-4 px-10 py-5 rounded-3xl text-xl font-black transition-all hover:scale-110"
+          style={{ backgroundColor: '#00F0FF', color: '#050B14', border: 'none', borderRadius: '24px', padding: '20px 40px', fontSize: '1.25rem', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer' }}
         >
-          <Settings size={18} /> Configure Thresholds
+          <Settings size={28} /> SYSTEM_CFG
         </button>
       </div>
       
-      <div className="flex flex-col lg:flex-row gap-6 flex-grow min-h-0">
+      <div 
+        className="flex flex-col xl:flex-row gap-10 flex-grow min-h-0"
+        style={{ display: 'flex', flexDirection: 'row', gap: '40px', flexGrow: 1, minHeight: 0 }}
+      >
         
         {/* Left panel: Camera */}
-        <div className={`lg:w-[65%] glass-panel flex flex-col items-center justify-center relative overflow-hidden transition-all duration-500 ease-in-out ${
-            alertLevel === 3 ? 'border-critical shadow-glow-critical bg-critical/5' : 
-            alertLevel === 2 ? 'border-warning shadow-[0_0_20px_rgba(255,170,0,0.3)] bg-warning/5' : ''
-          }`}
+        <div 
+          className={`xl:w-[60%] flex flex-col items-center justify-center relative overflow-hidden transition-all duration-700 ease-in-out p-2 rounded-[3rem] border-4
+            ${alertLevel === 3 ? 'bg-critical/20' : 
+            alertLevel === 2 ? 'bg-warning/20' : 
+            'bg-black'}
+          `}
+          style={{ 
+            width: '60%', 
+            borderRadius: '48px', 
+            border: alertLevel === 3 ? '4px solid #FF2A2A' : alertLevel === 2 ? '4px solid #FFE600' : '4px solid rgba(0, 240, 255, 0.4)',
+            backgroundColor: alertLevel === 3 ? 'rgba(255, 42, 42, 0.2)' : alertLevel === 2 ? 'rgba(255, 230, 0, 0.2)' : '#000000',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden'
+          }}
         >
           {alertLevel > 0 && (
-            <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-background/80 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
-              <ShieldAlert size={16} className={alertLevel === 3 ? "text-critical animate-pulse" : "text-warning"} />
-              <span className={`text-xs font-bold font-orbitron uppercase tracking-wider ${alertLevel === 3 ? "text-critical" : "text-warning"}`}>
-                Threat Level {alertLevel}
+            <div 
+              className={`absolute top-12 left-12 z-20 flex items-center gap-5 px-10 py-6 rounded-[2rem] border-4 backdrop-blur-2xl shadow-3xl animate-pulse
+                ${alertLevel === 3 ? 'bg-critical border-white text-white' : 'bg-warning border-black text-black'}`}
+              style={{ 
+                position: 'absolute', top: '48px', left: '48px', zIndex: 20, display: 'flex', alignItems: 'center', gap: '20px', padding: '24px 40px', borderRadius: '32px', border: alertLevel === 3 ? '4px solid #ffffff' : '4px solid #000000', 
+                backgroundColor: alertLevel === 3 ? '#FF2A2A' : '#FFE600', color: alertLevel === 3 ? '#ffffff' : '#000000'
+              }}
+            >
+              <ShieldAlert size={40} />
+              <span style={{ fontSize: '1.875rem', fontWeight: 900, fontFamily: 'Orbitron', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                CRITICAL THREAT {alertLevel}
               </span>
             </div>
           )}
           
-          <div className="w-full h-full relative">
+          <div 
+            className="w-full h-full relative rounded-[2.8rem] overflow-hidden bg-black"
+            style={{ width: '100%', height: '100%', borderRadius: '44px', overflow: 'hidden', backgroundColor: '#000000' }}
+          >
             <WebcamFeed onStatsUpdate={handleStats} />
-            
-            {/* Visual overlay grid for tech feel */}
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDEwaDQwTTAgMjBoNDBNMCAzMGg0ME0xMCAwdjQwTTIwIDB2NDBNMzAgMHY0MCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiAvPjwvc3ZnPg==')] opacity-20 pointer-events-none mix-blend-overlay" />
           </div>
         </div>
 
         {/* Right panel: Metrics */}
-        <div className="lg:w-[35%] flex flex-col gap-6">
-          <div className="glass-panel p-6 flex-grow flex flex-col">
-            <h2 className="text-xl font-orbitron font-bold text-white mb-6 border-b border-white/5 pb-4 flex items-center gap-2">
-              <Activity size={20} className="text-accent" /> Sensor Data
+        <div className="xl:w-[40%] flex flex-col gap-10" style={{ width: '40%', display: 'flex', flexDirection: 'column', gap: '40px' }}>
+          <div 
+            className="bg-[#111927] p-12 flex-grow flex flex-col relative overflow-hidden rounded-[3rem] border-2 border-white/10"
+            style={{ backgroundColor: '#111927', padding: '48px', borderRadius: '48px', border: '2px solid rgba(255, 255, 255, 0.1)', display: 'flex', flexDirection: 'column', flexGrow: 1 }}
+          >
+            <h2 
+              className="text-3xl font-orbitron font-black text-white mb-12 border-b-2 border-white/10 pb-8 flex items-center gap-4 relative z-10 uppercase tracking-widest"
+              style={{ fontSize: '1.875rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', borderBottom: '2px solid rgba(255, 255, 255, 0.1)', paddingBottom: '32px', marginBottom: '48px', display: 'flex', alignItems: 'center', gap: '16px', textTransform: 'uppercase' }}
+            >
+              <Zap size={36} style={{ color: '#00F0FF' }} /> Sensor Analytics
             </h2>
             
-            <div className="space-y-6 flex-grow">
-              <div className="bg-surface/50 p-4 rounded-xl border border-white/5 relative overflow-hidden group">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-400 text-xs font-bold tracking-wider uppercase flex items-center gap-2">
-                    <Eye size={14} /> Eye Aspect Ratio
+            <div className="space-y-10 flex-grow relative z-10" style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
+              <div 
+                className="bg-black/40 p-10 rounded-[2.5rem] border-2 border-white/10 shadow-2xl"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', padding: '40px', borderRadius: '40px', border: '2px solid rgba(255, 255, 255, 0.1)' }}
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <span style={{ color: '#D1D5DB', fontSize: '1.125rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Eye size={28} style={{ color: '#00F0FF' }} /> Eye Ratio (EAR)
                   </span>
-                  <span className="text-[10px] text-gray-500 font-mono">THR: {earThresh}</span>
                 </div>
-                <div className="flex items-end gap-3">
-                  <span className={`font-mono text-4xl font-light ${ear < earThresh ? 'text-warning text-shadow-glow' : 'text-accent'}`}>
+                <div className="flex items-center gap-10" style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+                  <span 
+                    style={{ fontSize: '6rem', fontWeight: 900, fontFamily: 'monospace', color: ear < earThresh ? '#FF2A2A' : '#ffffff', letterSpacing: '-0.05em' }}
+                  >
                     {ear.toFixed(2)}
                   </span>
+                  <div className="flex flex-col gap-2">
+                    <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 900, textTransform: 'uppercase' }}>LIMIT</span>
+                    <span style={{ fontSize: '1.5rem', color: '#00F0FF', fontWeight: 900, fontFamily: 'monospace' }}>{earThresh}</span>
+                  </div>
                 </div>
-                <div className="w-full bg-surface_light h-1.5 mt-4 rounded-full overflow-hidden">
+                <div 
+                  className="w-full bg-black/60 h-6 mt-10 rounded-full overflow-hidden border-2 border-white/10"
+                  style={{ width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.6)', height: '24px', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(255, 255, 255, 0.1)', marginTop: '40px' }}
+                >
                    <div 
-                      className={`h-full transition-all duration-200 ${ear < earThresh ? 'bg-warning shadow-[0_0_10px_#ffaa00]' : 'bg-accent shadow-glow-accent'}`} 
-                      style={{ width: `${Math.min(ear / 0.4 * 100, 100)}%` }} 
+                      style={{ height: '100%', width: `${Math.min(ear / 0.4 * 100, 100)}%`, backgroundColor: ear < earThresh ? '#FF2A2A' : '#00F0FF', borderRadius: '12px', transition: 'all 0.3s' }} 
                    />
                 </div>
               </div>
 
-              <div className="bg-surface/50 p-4 rounded-xl border border-white/5">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-gray-400 text-xs font-bold tracking-wider uppercase flex items-center gap-2">
-                    <Eye size={14} className="opacity-50" /> Yawn Index (MAR)
+              <div 
+                className="bg-black/40 p-10 rounded-[2.5rem] border-2 border-white/10 shadow-2xl"
+                style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)', padding: '40px', borderRadius: '40px', border: '2px solid rgba(255, 255, 255, 0.1)' }}
+              >
+                <div className="flex justify-between items-center mb-6">
+                  <span style={{ color: '#D1D5DB', fontSize: '1.125rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <Activity size={28} style={{ color: '#FF007F' }} /> Yawn Index (MAR)
                   </span>
-                  <span className="text-[10px] text-gray-500 font-mono">THR: {marThresh}</span>
                 </div>
-                <span className={`font-mono text-4xl font-light ${mar > marThresh ? 'text-warning text-shadow-glow' : 'text-accent'}`}>
-                  {mar.toFixed(2)}
-                </span>
-                <div className="w-full bg-surface_light h-1.5 mt-4 rounded-full overflow-hidden">
+                <div className="flex items-center gap-10" style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+                  <span 
+                    style={{ fontSize: '6rem', fontWeight: 900, fontFamily: 'monospace', color: mar > marThresh ? '#FFE600' : '#ffffff', letterSpacing: '-0.05em' }}
+                  >
+                    {mar.toFixed(2)}
+                  </span>
+                  <div className="flex flex-col gap-2">
+                    <span style={{ fontSize: '0.75rem', color: '#6B7280', fontWeight: 900, textTransform: 'uppercase' }}>LIMIT</span>
+                    <span style={{ fontSize: '1.5rem', color: '#FF007F', fontWeight: 900, fontFamily: 'monospace' }}>{marThresh}</span>
+                  </div>
+                </div>
+                <div 
+                  className="w-full bg-black/60 h-6 mt-10 rounded-full overflow-hidden border-2 border-white/10"
+                  style={{ width: '100%', backgroundColor: 'rgba(0, 0, 0, 0.6)', height: '24px', borderRadius: '12px', overflow: 'hidden', border: '2px solid rgba(255, 255, 255, 0.1)', marginTop: '40px' }}
+                >
                    <div 
-                      className={`h-full transition-all duration-200 ${mar > marThresh ? 'bg-warning shadow-[0_0_10px_#ffaa00]' : 'bg-accent shadow-glow-accent'}`} 
-                      style={{ width: `${Math.min(mar / 1.0 * 100, 100)}%` }} 
+                      style={{ height: '100%', width: `${Math.min(mar / 1.0 * 100, 100)}%`, backgroundColor: mar > marThresh ? '#FFE600' : '#FF007F', borderRadius: '12px', transition: 'all 0.3s' }} 
                    />
                 </div>
               </div>
 
-              <div className={`p-4 rounded-xl border transition-all duration-300 ${phoneDetected ? 'bg-critical/10 border-critical/50 shadow-glow-critical' : 'bg-surface/50 border-white/5'}`}>
-                <span className="text-gray-400 text-xs font-bold tracking-wider uppercase flex items-center gap-2 mb-3">
-                  <Smartphone size={14} /> Device Detection
+              <div 
+                className="p-10 rounded-[2.5rem] border-2 transition-all duration-500 shadow-3xl"
+                style={{ backgroundColor: phoneDetected ? 'rgba(255, 42, 42, 0.2)' : 'rgba(0, 0, 0, 0.4)', padding: '40px', borderRadius: '40px', border: phoneDetected ? '2px solid #FF2A2A' : '2px solid rgba(255, 255, 255, 0.1)' }}
+              >
+                <span style={{ color: '#D1D5DB', fontSize: '1.125rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+                  <Smartphone size={28} style={{ color: phoneDetected ? '#FF2A2A' : '#00FF66' }} /> Cab Environment
                 </span>
-                <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${phoneDetected ? 'bg-critical animate-pulse shadow-[0_0_10px_#ff3d3d]' : 'bg-success shadow-[0_0_10px_#00ff88]'}`} />
-                  <span className={`font-orbitron font-bold tracking-wide ${phoneDetected ? 'text-critical' : 'text-success'}`}>
-                    {phoneDetected ? 'DISTRACTION IN CABIN' : 'SECURE'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '32px', backgroundColor: 'rgba(0, 0, 0, 0.6)', padding: '32px', borderRadius: '24px', border: '2px solid rgba(255, 255, 255, 0.05)' }}>
+                  <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: phoneDetected ? '#FF2A2A' : '#00FF66', boxShadow: phoneDetected ? '0 0 30px #FF2A2A' : '0 0 30px #00FF66' }} />
+                  <span style={{ fontSize: '2.25rem', fontWeight: 900, fontFamily: 'Orbitron', color: phoneDetected ? '#FF2A2A' : '#00FF66', letterSpacing: '-0.05em' }}>
+                    {phoneDetected ? 'DISTRACTION DETECTED' : 'SECURE & FOCUSED'}
                   </span>
                 </div>
               </div>
             </div>
           </div>
           
-          <div className="glass-panel p-5 h-[35%] flex flex-col">
-             <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
-               <h2 className="text-sm font-orbitron font-bold text-gray-300">System Logs</h2>
-               <div className="flex items-center gap-2">
-                 <span className="relative flex h-2 w-2">
-                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
-                 </span>
-                 <span className="text-[10px] text-accent font-mono uppercase tracking-widest">Recording</span>
+          <div 
+            className="bg-[#111927] p-10 h-[30%] flex flex-col relative overflow-hidden rounded-[3rem] border-2 border-white/10"
+            style={{ backgroundColor: '#111927', padding: '40px', borderRadius: '48px', border: '2px solid rgba(255, 255, 255, 0.1)', height: '30%', display: 'flex', flexDirection: 'column' }}
+          >
+             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '2px solid rgba(255, 255, 255, 0.1)', paddingBottom: '24px' }}>
+               <h2 style={{ fontSize: '1.25rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', textTransform: 'uppercase', margin: 0 }}>System_Logs</h2>
+               <div style={{ backgroundColor: 'rgba(255, 42, 42, 0.2)', padding: '8px 24px', borderRadius: '9999px', border: '2px solid #FF2A2A', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                 <div style={{ width: '12px', height: '12px', backgroundColor: '#FF2A2A', borderRadius: '50%' }} className="animate-ping" />
+                 <span style={{ fontSize: '0.75rem', color: '#FF2A2A', fontWeight: 900, textTransform: 'uppercase' }}>RECORDING</span>
                </div>
              </div>
              
-             <div className="flex-grow overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+             <div className="flex-grow overflow-y-auto space-y-4 pr-4 custom-scrollbar" style={{ flexGrow: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                {events.length === 0 ? (
-                 <div className="h-full flex items-center justify-center">
-                    <span className="text-gray-500 font-mono text-xs opacity-50">awaiting events...</span>
-                 </div>
+                  <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.3 }}>
+                    <span style={{ color: '#9CA3AF', fontSize: '1.25rem', fontWeight: 900, textTransform: 'uppercase', fontStyle: 'italic' }}>Initializing Telemetry...</span>
+                  </div>
                ) : (
                  events.map((evt, idx) => (
-                   <div key={idx} className="flex flex-col text-sm border-l-2 border-warning pl-3 bg-white/[0.02] py-2 pr-2 rounded hover:bg-white/[0.05] transition-colors">
-                     <span className="text-gray-500 text-[10px] mb-0.5 font-mono">{evt.time}</span>
-                     <span className="text-gray-300 text-xs">{evt.msg}</span>
+                   <div key={idx} style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '24px', borderRadius: '24px', border: '2px solid rgba(255, 255, 255, 0.05)', borderLeft: '8px solid #FF007F' }}>
+                     <span style={{ color: '#FF007F', fontSize: '0.875rem', fontWeight: 900, fontFamily: 'monospace', marginBottom: '4px', display: 'block' }}>{evt.time}</span>
+                     <span style={{ color: '#ffffff', fontSize: '1.5rem', fontWeight: 700, textTransform: 'uppercase' }}>{evt.msg}</span>
                    </div>
                  ))
                )}

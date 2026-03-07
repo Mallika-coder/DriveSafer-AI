@@ -6,66 +6,52 @@
 
 @layer base {
   body {
-    @apply bg-background text-white font-sans antialiased overflow-x-hidden;
-    /* Animated colorful gradient mesh background */
-    background: 
-      radial-gradient(circle at 15% 50%, rgba(112, 0, 255, 0.08), transparent 25%),
-      radial-gradient(circle at 85% 30%, rgba(0, 240, 255, 0.08), transparent 25%),
-      radial-gradient(circle at 50% 80%, rgba(255, 0, 127, 0.05), transparent 25%),
-      linear-gradient(to bottom, #050B14, #0B132B);
-    background-attachment: fixed;
+    background-color: #050B14 !important;
+    color: #ffffff !important;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-transform: uppercase;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', sans-serif !important;
+    color: #ffffff !important;
+  }
+
+  p, span, div {
+    color: #ffffff;
   }
 
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-background;
+    background: #050B14;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-surface_light rounded-full border border-primary/20;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    @apply bg-accent/50;
+    background: #1C2541;
+    border-radius: 10px;
+    border: 2px solid #00F0FF;
   }
 }
 
 @layer utilities {
   .glass-panel {
-    @apply bg-surface/60 backdrop-blur-xl border border-white/10 rounded-2xl shadow-glass relative overflow-hidden;
+    background: rgba(11, 19, 43, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 2rem;
   }
   
-  /* Adds a subtle colorful top-border highlight to panels */
-  .glass-panel::before {
-    content: '';
-    @apply absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary_light to-transparent opacity-50;
-  }
-  
-  .glass-button {
-    @apply bg-surface_light/50 backdrop-blur-md border border-accent/40 text-white 
-           hover:bg-accent/20 hover:border-accent hover:text-accent hover:shadow-glow-accent 
-           transition-all duration-300 transform hover:-translate-y-0.5;
-  }
-  
-  .glass-button-pink {
-    @apply bg-surface_light/50 backdrop-blur-md border border-secondary/40 text-white 
-           hover:bg-secondary/20 hover:border-secondary hover:text-secondary hover:shadow-glow-pink 
-           transition-all duration-300 transform hover:-translate-y-0.5;
-  }
-
-  /* Vibrant sweeping gradient */
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-accent via-primary_light to-secondary bg-[length:200%_auto] animate-[gradient_3s_linear_infinite];
-  }
-  
-  @keyframes gradient {
-    0% { background-position: 0% center; }
-    100% { background-position: 200% center; }
+    background: linear-gradient(to right, #00F0FF, #7000FF, #FF007F);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
   }
 }
+
