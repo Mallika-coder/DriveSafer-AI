@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .database import engine, models
-from .routers import sessions, events, websocket
+from database import engine, models
+from routers import sessions, events, websocket
 
 models.Base.metadata.create_all(bind=engine)
 
