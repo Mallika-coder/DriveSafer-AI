@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-from ..database import models, db
-from ..models import schemas
+from database import models, db
+from models import schemas
 
 router = APIRouter(prefix="/api", tags=["events"])
 

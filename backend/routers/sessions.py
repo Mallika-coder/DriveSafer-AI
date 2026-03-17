@@ -3,8 +3,8 @@ from sqlalchemy.orm import Session
 from typing import List
 from datetime import datetime
 
-from ..database import models, db
-from ..models import schemas
+from database import models, db
+from models import schemas
 
 router = APIRouter(prefix="/api/sessions", tags=["sessions"])
 
