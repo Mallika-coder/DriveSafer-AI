@@ -71,7 +71,8 @@ export default function Monitor() {
       setEvents(prev => [{ time: new Date().toLocaleTimeString(), msg }, ...prev].slice(0, 10));
       
       try {
-        axios.post('http://localhost:8000/api/events', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+        axios.post(`${apiUrl}/api/events`, {
           session_id: 1, 
           event_type: isPhone ? 'distraction' : (drowsyFrames >= 15 ? 'drowsiness_critical' : 'yawn'),
           severity: currentLevel,
