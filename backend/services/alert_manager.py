@@ -10,4 +10,4 @@ class AlertManager:
         if current_time - last_time > self.cooldown_period:
             self.last_alert_time[alert_type] = current_time
             return True
-        return False
+        return False\
