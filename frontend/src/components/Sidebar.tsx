@@ -89,17 +89,29 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(to top right, #00F0FF, #7000FF)', padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div style={{ width: '100%', height: '100%', backgroundColor: '#000', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <User size={20} style={{ color: '#fff' }} />
-          </div>
-        </div>
-        <div>
-          <p style={{ color: '#ffffff', fontWeight: 700, fontSize: '0.875rem', margin: 0 }}>Mallika Verma</p>
-          <p style={{ color: '#00F0FF', fontWeight: 700, fontSize: '0.6rem', margin: 0, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Sparkles size={10} /> DEVELOPER
-          </p>
+      {/* Team */}
+      <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <p style={{ color: '#6B7280', fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px' }}>
+          <Sparkles size={10} style={{ display: 'inline', marginRight: '4px' }} />Team
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {[
+            { name: 'Mallika', role: 'ML Pipeline' },
+            { name: 'Harsh', role: 'Frontend' },
+            { name: 'Jivit', role: 'Computer Vision' },
+            { name: 'Divyanshu', role: 'Signal Processing' },
+            { name: 'Hemant', role: 'Backend' },
+          ].map((member, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: i === 0 ? 'linear-gradient(to right, #00F0FF, #7000FF)' : '#1C2541', display: 'flex', alignItems: 'center', justifyContent: 'center', border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>
+                <User size={12} style={{ color: '#fff' }} />
+              </div>
+              <div>
+                <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700 }}>{member.name}</span>
+                <span style={{ color: '#6B7280', fontSize: '0.55rem', marginLeft: '6px' }}>{member.role}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </nav>
