@@ -57,7 +57,7 @@ export default function Monitor() {
   // Refs
   const earHistory = useRef<number[]>([]);
   const yawnCount = useRef(0);
-  const { triggerAlert } = useAlertSound();
+  const { triggerAlert, stopAlarm } = useAlertSound();
   const cooldownActive = useRef(false);
   const blinkDetector = useRef(new BlinkDetector());
   const gazeTracker = useRef(new GazeStabilityTracker());
@@ -253,10 +253,11 @@ export default function Monitor() {
       cooldownActive.current = true;
       setTimeout(() => {
         setAlertLevel(0);
+        stopAlarm();
         cooldownActive.current = false;
       }, 5000);
     }
-  }, [headPose.pitch, headPose.yaw, headPose.isDistracted, marThresh, sessionId, triggerAlert]);
+  }, [headPose.pitch, headPose.yaw, headPose.isDistracted, marThresh, sessionId, triggerAlert, stopAlarm]);
 
   const formatDuration = (s: number) => {
     const m = Math.floor(s / 60);

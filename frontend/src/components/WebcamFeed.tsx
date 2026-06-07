@@ -49,8 +49,11 @@ export default function WebcamFeed({ onStatsUpdate }: WebcamFeedProps) {
     if (!ctx) return;
 
     let phoneFound = false;
+    const phoneClasses = ['cell phone', 'remote', 'book'];
     for (const p of predictions) {
-      if (p.class === 'cell phone' && p.score > 0.6) {
+      const isPhone = phoneClasses.includes(p.class) && p.score > 0.5;
+      const isHandHeld = p.class === 'cell phone' && p.score > 0.4;
+      if (isPhone || isHandHeld) {
         phoneFound = true;
 
         ctx.save();
