@@ -15,8 +15,6 @@ const NOSE_TIP = 1;
 const CHIN = 152;
 const LEFT_EYE_OUTER = 263;
 const RIGHT_EYE_OUTER = 33;
-const LEFT_MOUTH = 61;
-const RIGHT_MOUTH = 291;
 const FOREHEAD = 10;
 
 export function estimateHeadPose(landmarks: Point3D[]): HeadPose {
