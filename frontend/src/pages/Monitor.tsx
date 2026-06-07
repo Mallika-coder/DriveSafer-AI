@@ -6,12 +6,17 @@ import CalibrationModal from '../components/CalibrationModal';
 import RealTimeChart from '../components/RealTimeChart';
 import DrowsinessGauge from '../components/DrowsinessGauge';
 import HeadPoseVisualizer from '../components/HeadPoseVisualizer';
+import XAIPanel from '../components/XAIPanel';
+import ABComparisonPanel from '../components/ABComparisonPanel';
 import { useAlertSound } from '../hooks/useAlertSound';
 import { estimateHeadPose, getGazeDirection } from '../utils/headPoseEstimator';
 import { computeDrowsinessScore, BlinkDetector, GazeStabilityTracker } from '../utils/drowsinessModel';
 import { AdaptiveCalibrator, type CalibrationData } from '../utils/calibration';
 import { TalkingDetector } from '../utils/talkingDetector';
 import { CognitiveLoadDetector } from '../utils/cognitiveLoadDetector';
+import { predictDrowsiness } from '../utils/tinyMLModel';
+import { DriverProfiler } from '../utils/driverProfiling';
+import { fleetManager } from '../utils/fleetManager';
 import axios from 'axios';
 import { Settings, ShieldAlert, Activity, Eye, Smartphone, Zap, Crosshair, Gauge, Brain, Timer, Headphones, MessageCircle } from 'lucide-react';
 
@@ -44,6 +49,9 @@ export default function Monitor() {
   const [sessionDuration, setSessionDuration] = useState(0);
   const [sessionId, setSessionId] = useState<number | null>(null);
 
+  // TinyML prediction state
+  const [mlPrediction, setMlPrediction] = useState<{ class: string; probabilities: number[]; confidence: number; inferenceTimeMs: number } | null>(null);
+
   // Talking & cognitive load state
   const [talkingState, setTalkingState] = useState({ isTalking: false, isYawning: false, isOnCall: false, talkingDuration: 0, confidence: 0, marFrequency: 0, marAmplitude: 0 });
   const [cognitiveLoad, setCognitiveLoad] = useState<{ cognitiveLoad: number; level: 'LOW' | 'MODERATE' | 'HIGH'; indicators: { reducedBlinking: boolean; fixatedGaze: boolean; noScanning: boolean; monotoneHead: boolean; activeConversation: boolean }; distracted: boolean }>({ cognitiveLoad: 0, level: 'LOW', indicators: { reducedBlinking: false, fixatedGaze: false, noScanning: false, monotoneHead: false, activeConversation: false }, distracted: false });
@@ -64,6 +72,7 @@ export default function Monitor() {
   const calibrator = useRef(new AdaptiveCalibrator());
   const talkingDetector = useRef(new TalkingDetector());
   const cognitiveDetector = useRef(new CognitiveLoadDetector());
+  const driverProfiler = useRef(new DriverProfiler());
   const frameCounter = useRef(0);
   const lastFpsTime = useRef(Date.now());
   const sessionStartTime = useRef(Date.now());
@@ -168,6 +177,23 @@ export default function Monitor() {
     });
     setDrowsiness(drowsinessResult);
 
+    // TinyML inference
+    const mlResult = predictDrowsiness(
+      newEar, newMar,
+      blinkDetector.current.getPERCLOS(),
+      headPose.pitch,
+      blinkDetector.current.getBlinkRate(),
+      blinkDetector.current.getAvgBlinkDuration(),
+      gazeTracker.current.getStability()
+    );
+    setMlPrediction(mlResult);
+
+    // Driver profiling
+    driverProfiler.current.recordScore(drowsinessResult.score);
+
+    // Fleet manager update
+    fleetManager.updateSelfScore(drowsinessResult.score, sessionDuration);
+
     // Chart data
     setChartData(prev => {
       const next = [...prev, { time: now, ear: newEar, mar: newMar, drowsinessScore: drowsinessResult.score }];
@@ -247,6 +273,16 @@ export default function Monitor() {
             severity: currentLevel,
             ear_value: newEar
           });
+
+          // Send to fleet manager
+          const alertType = isPhone ? 'phone_distraction' as const
+            : cogResult.distracted ? 'cognitive_overload' as const
+            : headPose.isDistracted ? 'eyes_off_road' as const
+            : 'drowsiness_critical' as const;
+          fleetManager.sendAlert(drowsinessResult.score, alertType, currentLevel);
+
+          // Record event for profiling
+          driverProfiler.current.recordEvent();
         } catch (e) { }
       }
 
@@ -499,6 +535,20 @@ export default function Monitor() {
               ))}
             </div>
           </div>
+
+          {/* XAI Panel */}
+          <XAIPanel factors={drowsiness.factors} mlPrediction={mlPrediction} totalScore={drowsiness.score} />
+
+          {/* A/B Comparison */}
+          <ABComparisonPanel
+            ear={ear}
+            earThreshold={earThresh}
+            fusionScore={drowsiness.score}
+            fusionLevel={drowsiness.level}
+            isTalking={talkingState.isTalking}
+            mar={mar}
+            marThreshold={marThresh}
+          />
 
           {/* Event Log */}
           <div style={{ backgroundColor: '#111927', padding: '16px 20px', borderRadius: '20px', border: '2px solid rgba(255,255,255,0.1)', flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
