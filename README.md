@@ -141,7 +141,7 @@ docker-compose up --build
 | Contributor | Role | Key Deliverables |
 |------------|------|-----------------|
 | **[Mallika-coder](https://github.com/Mallika-coder)** | ML Pipeline & Architecture | Drowsiness fusion model, adaptive calibration, pipeline integration, project architecture |
+| **[SimplyHarsh33](https://github.com/SimplyHarsh33)** | Frontend & UI/UX | React components, canvas visualizations, alert system, responsive layout, styling, home page |
 | **[jivit-kumar](https://github.com/jivit-kumar)** | Computer Vision | Head pose estimation, gaze tracking, EAR/MAR algorithms, FaceMesh/COCO-SSD inference, WebcamFeed |
 | **[Divyanshu64](https://github.com/Divyanshu64)** | Signal Processing & Analytics | Talking/yawn discriminator, cognitive load detection, hands-free call detection, analytics dashboard |
 | **[hemant-pal164](https://github.com/hemant-pal164)** | Backend & Data | FastAPI REST/WebSocket APIs, database models, session management, analytics endpoints, history page |
-| **[SimplyHarsh33](https://github.com/SimplyHarsh33)** | Frontend & UI/UX | React components, canvas visualizations, alert system, responsive layout, styling, home page |
