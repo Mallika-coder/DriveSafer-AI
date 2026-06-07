@@ -51,7 +51,7 @@ export class DriverProfiler {
     this.loadFromStorage();
   }
 
-  startSession(sessionId: number) {
+  startSession(_sessionId: number) {
     this.currentSession = {
       startTime: Date.now(),
       scores: [],

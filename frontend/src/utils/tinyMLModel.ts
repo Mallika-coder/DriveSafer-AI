@@ -149,7 +149,6 @@ export function predictDrowsiness(
  */
 export class OnlineLearner {
   private corrections: { features: number[]; label: number }[] = [];
-  private learningRate = 0.01;
 
   addCorrection(features: number[], correctLabel: number) {
     this.corrections.push({ features, label: correctLabel });
