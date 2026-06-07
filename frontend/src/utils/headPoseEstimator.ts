@@ -34,19 +34,10 @@ export function estimateHeadPose(landmarks: Point3D[]): HeadPose {
     z: (leftEye.z + rightEye.z) / 2,
   };
 
-  const mouthCenter = {
-    x: (leftMouth.x + rightMouth.x) / 2,
-    y: (leftMouth.y + rightMouth.y) / 2,
-    z: (leftMouth.z + rightMouth.z) / 2,
-  };
-
   // Yaw: horizontal rotation — nose offset from eye center
   const yaw = (nose.x - eyeCenter.x) * 180;
 
   // Pitch: vertical tilt — nose position relative to face vertical axis
-  const faceHeight = Math.sqrt(
-    Math.pow(forehead.x - chin.x, 2) + Math.pow(forehead.y - chin.y, 2)
-  );
   const noseVerticalRatio = (nose.y - forehead.y) / (chin.y - forehead.y);
   const pitch = (noseVerticalRatio - 0.4) * 120;
 

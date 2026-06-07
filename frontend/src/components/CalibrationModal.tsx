@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { Crosshair, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Crosshair, CheckCircle } from 'lucide-react';
 
 interface CalibrationModalProps {
   isOpen: boolean;

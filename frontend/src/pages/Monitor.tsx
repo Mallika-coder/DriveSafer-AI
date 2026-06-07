@@ -38,7 +38,7 @@ export default function Monitor() {
   // New ML state
   const [headPose, setHeadPose] = useState({ pitch: 0, yaw: 0, roll: 0, isDistracted: false });
   const [gazeInfo, setGazeInfo] = useState({ x: 0.5, y: 0.5, direction: 'CENTER' });
-  const [drowsiness, setDrowsiness] = useState({ score: 0, level: 'ALERT' as const, confidence: 0.5, factors: [] as any[] });
+  const [drowsiness, setDrowsiness] = useState<{ score: number; level: 'ALERT' | 'MILD' | 'MODERATE' | 'SEVERE'; confidence: number; factors: any[] }>({ score: 0, level: 'ALERT', confidence: 0.5, factors: [] });
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
   const [fps, setFps] = useState(0);
   const [sessionDuration, setSessionDuration] = useState(0);
@@ -46,7 +46,7 @@ export default function Monitor() {
 
   // Talking & cognitive load state
   const [talkingState, setTalkingState] = useState({ isTalking: false, isYawning: false, isOnCall: false, talkingDuration: 0, confidence: 0, marFrequency: 0, marAmplitude: 0 });
-  const [cognitiveLoad, setCognitiveLoad] = useState({ cognitiveLoad: 0, level: 'LOW' as const, indicators: { reducedBlinking: false, fixatedGaze: false, noScanning: false, monotoneHead: false, activeConversation: false }, distracted: false });
+  const [cognitiveLoad, setCognitiveLoad] = useState<{ cognitiveLoad: number; level: 'LOW' | 'MODERATE' | 'HIGH'; indicators: { reducedBlinking: boolean; fixatedGaze: boolean; noScanning: boolean; monotoneHead: boolean; activeConversation: boolean }; distracted: boolean }>({ cognitiveLoad: 0, level: 'LOW', indicators: { reducedBlinking: false, fixatedGaze: false, noScanning: false, monotoneHead: false, activeConversation: false }, distracted: false });
 
   // Calibration state
   const [isCalibrationOpen, setIsCalibrationOpen] = useState(false);

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Eye, Smartphone, Car, Activity, Zap, Shield, Brain, BarChart3 } from 'lucide-react';
+import { ShieldAlert, Eye, Smartphone, Car, Activity, Brain, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 export default function Home() {
-  const [sessionCount, setSessionCount] = useState(0);
+  const [, setSessionCount] = useState(0);
   const [eventCounts, setEventCounts] = useState({ drowsiness: 0, distraction: 0, total: 0 });
 
   useEffect(() => {

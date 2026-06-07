@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, TrendingDown, Brain, Clock, AlertTriangle, Target } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
+import { BarChart3, Brain, Clock, AlertTriangle, Target } from 'lucide-react';
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
 import axios from 'axios';
 
 interface SessionData {
@@ -14,7 +14,7 @@ interface SessionData {
 
 export default function Analytics() {
   const [sessions, setSessions] = useState<SessionData[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';

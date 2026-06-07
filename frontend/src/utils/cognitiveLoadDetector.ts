@@ -28,9 +28,7 @@ export class CognitiveLoadDetector {
   private gazeVarianceHistory: number[] = [];
   private headMovementHistory: { yaw: number; pitch: number; t: number }[] = [];
   private baselineBlinkRate = 15;
-  private baselineGazeVariance = 0;
   private baselineSamples = 0;
-  private isCalibrated = false;
 
   update(
     blinkRate: number,

@@ -40,7 +40,7 @@ export class TalkingDetector {
   private talkingThresholdMultiplier = 1.3;
   private yawnThresholdMultiplier = 2.2;
 
-  update(mar: number, headRoll: number, headYaw: number, phoneDetected: boolean, timestamp: number): TalkingState {
+  update(mar: number, headRoll: number, _headYaw: number, phoneDetected: boolean, timestamp: number): TalkingState {
     this.marHistory.push({ value: mar, timestamp });
 
     // Keep last 5 seconds of history
@@ -146,7 +146,7 @@ export class TalkingDetector {
     return { isTalking, isYawning, confidence: Math.max(0, confidence), frequency, amplitude };
   }
 
-  private detectHandsFreeCall(isTalking: boolean, phoneDetected: boolean, headRoll: number, timestamp: number): boolean {
+  private detectHandsFreeCall(isTalking: boolean, phoneDetected: boolean, _headRoll: number, timestamp: number): boolean {
     // Hands-free call indicators:
     // 1. Sustained talking (>5 seconds)
     // 2. No phone visible (using earphones/buds)
