@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #050B14 !important;
+    color: #ffffff !important;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-transform: uppercase;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Orbitron', sans-serif !important;
+    color: #ffffff !important;
+  }
+
+  p, span, div {
+    color: #ffffff;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #050B14;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1C2541;
+    border-radius: 10px;
+    border: 2px solid #00F0FF;
+  }
+}
+
+@layer utilities {
+  .glass-panel {
+    background: rgba(11, 19, 43, 0.8) !important;
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 2rem;
+  }
+  
+  .text-gradient {
+    background: linear-gradient(to right, #00F0FF, #7000FF, #FF007F);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+}
+
