@@ -43,7 +43,7 @@ export class CognitiveLoadDetector {
     if (this.baselineSamples < 300) {
       this.baselineBlinkRate = blinkRate > 5 ? blinkRate : this.baselineBlinkRate;
       this.baselineSamples++;
-      if (this.baselineSamples === 300) this.isCalibrated = true;
+      if (this.baselineSamples === 300) { /* calibrated */ }
     }
 
     this.blinkRateHistory.push(blinkRate);

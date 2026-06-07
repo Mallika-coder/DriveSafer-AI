@@ -24,8 +24,6 @@ export function estimateHeadPose(landmarks: Point3D[]): HeadPose {
   const chin = landmarks[CHIN];
   const leftEye = landmarks[LEFT_EYE_OUTER];
   const rightEye = landmarks[RIGHT_EYE_OUTER];
-  const leftMouth = landmarks[LEFT_MOUTH];
-  const rightMouth = landmarks[RIGHT_MOUTH];
   const forehead = landmarks[FOREHEAD];
 
   const eyeCenter = {
