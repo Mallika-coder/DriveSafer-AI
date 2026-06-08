@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShieldAlert, Eye, Smartphone, Car, Activity, Brain, BarChart3, Cpu, Layers, Fingerprint, Radar } from 'lucide-react';
+import { ShieldAlert, Eye, Smartphone, Car, Activity, Brain, Cpu, Layers, Fingerprint, Radar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 

@@ -127,7 +127,7 @@ export function predictDrowsiness(
   // Forward pass through MLP
   const h1 = matmul(normalized, W1, B1).map(relu);
   const h2 = matmul(h1, W2, B2).map(relu);
-  const logits = matmul(h2, W3, B3);
+  matmul(h2, W3, B3);
 
   // Compute a risk score from normalized features using trained feature importance
   const featureWeights = [0.20, 0.10, 0.30, 0.10, 0.08, 0.15, 0.07];
