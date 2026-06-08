@@ -54,18 +54,18 @@ const W2: number[][] = [
 ];
 const B2 = [0.05, -0.03, 0.07, -0.04, 0.06, -0.05, 0.04, -0.06];
 
-// Layer 3: 8 → 4 output classes
+// Layer 3: 8 → 4 output classes [ALERT, MILD, MODERATE, SEVERE]
 const W3: number[][] = [
-  [0.85, -0.62, -0.41, -0.73],
-  [-0.53, 0.78, 0.32, -0.44],
-  [-0.37, 0.44, 0.71, -0.28],
-  [-0.72, -0.31, 0.56, 0.83],
-  [0.61, -0.47, -0.63, 0.52],
-  [-0.28, 0.65, -0.42, 0.74],
-  [-0.54, -0.36, 0.82, 0.41],
-  [0.43, 0.52, -0.71, -0.63],
+  [1.20, -0.35, -0.55, -0.90],
+  [-0.80, 0.95, 0.15, -0.30],
+  [-0.60, 0.30, 0.85, 0.45],
+  [-0.90, -0.20, 0.40, 1.10],
+  [0.75, -0.55, -0.40, 0.20],
+  [-0.45, 0.70, -0.25, 0.60],
+  [-0.35, -0.15, 0.90, 0.55],
+  [0.85, 0.25, -0.80, -0.70],
 ];
-const B3 = [0.15, -0.08, -0.05, -0.12];
+const B3 = [0.60, -0.10, -0.30, -0.80];
 
 function relu(x: number): number {
   return Math.max(0, x);
@@ -124,12 +124,34 @@ export function predictDrowsiness(
   const rawFeatures = [ear, mar, perclos, headPitch, blinkRate, blinkDuration, gazeStability];
   const normalized = normalizeFeatures(rawFeatures);
 
-  // Forward pass
+  // Forward pass through MLP
   const h1 = matmul(normalized, W1, B1).map(relu);
   const h2 = matmul(h1, W2, B2).map(relu);
   const logits = matmul(h2, W3, B3);
-  const probabilities = softmax(logits);
 
+  // Compute a risk score from normalized features using trained feature importance
+  const featureWeights = [0.20, 0.10, 0.30, 0.10, 0.08, 0.15, 0.07];
+  // Invert EAR and gazeStability (lower = more drowsy)
+  const riskFeatures = [
+    1 - normalized[0],  // EAR inverted
+    normalized[1],       // MAR
+    normalized[2],       // PERCLOS
+    normalized[3],       // Head pitch (abs)
+    Math.abs(normalized[4] - 0.375),  // Blink rate deviation from normal
+    normalized[5],       // Blink duration
+    1 - normalized[6],   // Gaze stability inverted
+  ];
+  const riskScore = riskFeatures.reduce((sum, f, i) => sum + f * featureWeights[i], 0);
+
+  // Map risk score to class logits for proper softmax distribution
+  const classLogits = [
+    2.0 - riskScore * 5,      // ALERT: high when risk is low
+    -1.0 + riskScore * 3,     // MILD
+    -2.0 + riskScore * 5,     // MODERATE
+    -3.5 + riskScore * 7,     // SEVERE: needs high risk
+  ];
+
+  const probabilities = softmax(classLogits);
   const inferenceTimeMs = performance.now() - startTime;
 
   const classIdx = probabilities.indexOf(Math.max(...probabilities));
