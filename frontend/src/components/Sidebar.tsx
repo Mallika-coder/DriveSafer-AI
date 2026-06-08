@@ -1,11 +1,11 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Activity, Clock, BarChart3, User, Sparkles, Radio, UserCircle } from 'lucide-react';
+import { Shield, Activity, Clock, BarChart3, User, Radio, UserCircle, Cpu } from 'lucide-react';
 
 export default function Sidebar() {
   const location = useLocation();
 
   const navItems = [
-    { path: '/', label: 'Dashboard', icon: Shield },
+    { path: '/', label: 'Overview', icon: Shield },
     { path: '/monitor', label: 'Monitor', icon: Activity },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/fleet', label: 'Fleet V2X', icon: Radio },
@@ -20,25 +20,27 @@ export default function Sidebar() {
         flexDirection: 'column',
         height: '100%',
         width: '280px',
-        backgroundColor: '#0B132B',
-        borderRight: '1px solid rgba(0, 240, 255, 0.15)',
-        padding: '32px 20px',
+        backgroundColor: '#0c1220',
+        borderRight: '1px solid rgba(255, 255, 255, 0.06)',
+        padding: '28px 16px',
         boxSizing: 'border-box',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: '48px', gap: '12px', padding: '0 8px' }}>
-        <div style={{ padding: '10px', border: '2px solid #00F0FF', borderRadius: '12px', backgroundColor: 'rgba(0, 240, 255, 0.1)' }}>
-          <Shield size={28} style={{ color: '#00F0FF' }} />
+      {/* Logo */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '0 12px', marginBottom: '36px' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'linear-gradient(135deg, #63b3ed, #4299e1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Shield size={18} style={{ color: '#fff' }} />
         </div>
         <div>
-          <h1 style={{ color: '#ffffff', margin: 0, fontSize: '1.25rem', fontWeight: 900, fontFamily: 'Orbitron' }}>
-            Drive<span style={{ color: '#00F0FF' }}>Safe</span>
+          <h1 style={{ color: '#f7fafc', margin: 0, fontSize: '1.1rem', fontWeight: 800, letterSpacing: '-0.02em' }}>
+            DriveSafe
           </h1>
-          <span style={{ color: '#6B7280', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em' }}>AI Safety System</span>
+          <span style={{ color: '#718096', fontSize: '0.55rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>AI Safety System</span>
         </div>
       </div>
 
-      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      {/* Navigation */}
+      <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
         {navItems.map((item, idx) => {
           const isActive = location.pathname === item.path;
           return (
@@ -48,70 +50,75 @@ export default function Sidebar() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                padding: '14px 16px',
-                borderRadius: '12px',
+                padding: '11px 14px',
+                borderRadius: '10px',
                 textDecoration: 'none',
-                transition: 'all 0.2s',
-                backgroundColor: isActive ? 'rgba(0, 240, 255, 0.1)' : 'transparent',
-                border: isActive ? '1px solid rgba(0, 240, 255, 0.3)' : '1px solid transparent',
+                transition: 'all 0.15s',
+                backgroundColor: isActive ? 'rgba(99, 179, 237, 0.1)' : 'transparent',
+                border: isActive ? '1px solid rgba(99, 179, 237, 0.2)' : '1px solid transparent',
               }}
             >
               <item.icon
-                size={20}
-                style={{
-                  color: isActive ? '#00F0FF' : '#6B7280',
-                  marginRight: '12px',
-                }}
+                size={17}
+                style={{ color: isActive ? '#63b3ed' : '#718096', marginRight: '11px' }}
               />
-              <span
-                style={{
-                  color: isActive ? '#ffffff' : '#9CA3AF',
-                  fontWeight: 700,
-                  fontSize: '0.875rem',
-                  letterSpacing: '0.05em',
-                }}
-              >
+              <span style={{ color: isActive ? '#f7fafc' : '#a0aec0', fontWeight: 600, fontSize: '0.8rem' }}>
                 {item.label}
               </span>
               {isActive && (
-                <div style={{ marginLeft: 'auto', width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#00F0FF', boxShadow: '0 0 8px #00F0FF' }} />
+                <div style={{ marginLeft: 'auto', width: '5px', height: '5px', borderRadius: '50%', backgroundColor: '#63b3ed' }} />
               )}
             </Link>
           );
         })}
       </div>
 
-      {/* ML Model Info */}
-      <div style={{ padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(112, 0, 255, 0.05)', border: '1px solid rgba(112, 0, 255, 0.2)', marginBottom: '16px' }}>
-        <span style={{ color: '#7000FF', fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Active Models</span>
-        <div style={{ marginTop: '8px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-          <span style={{ color: '#9CA3AF', fontSize: '0.65rem' }}>MediaPipe FaceMesh v0.4</span>
-          <span style={{ color: '#9CA3AF', fontSize: '0.65rem' }}>TF.js COCO-SSD v2.2</span>
-          <span style={{ color: '#9CA3AF', fontSize: '0.65rem' }}>Custom Drowsiness Model</span>
+      {/* Model Status */}
+      <div style={{ padding: '14px', borderRadius: '10px', backgroundColor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+          <Cpu size={12} style={{ color: '#63b3ed' }} />
+          <span style={{ color: '#718096', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Active Models</span>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+          {[
+            { name: 'FaceMesh v0.4', status: 'active' },
+            { name: 'COCO-SSD v2.2', status: 'active' },
+            { name: 'TinyML Classifier', status: 'active' },
+            { name: 'Driver Adaptation', status: 'learning' },
+          ].map((m, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span style={{ color: '#a0aec0', fontSize: '0.6rem' }}>{m.name}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: m.status === 'active' ? '#48bb78' : '#ed8936' }} />
+                <span style={{ color: m.status === 'active' ? '#48bb78' : '#ed8936', fontSize: '0.5rem', fontWeight: 600 }}>{m.status}</span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Team */}
-      <div style={{ paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-        <p style={{ color: '#6B7280', fontSize: '0.55rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', margin: '0 0 10px' }}>
-          <Sparkles size={10} style={{ display: 'inline', marginRight: '4px' }} />Team
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+      <div style={{ paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <p style={{ color: '#4a5568', fontSize: '0.55rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em', margin: '0 0 8px', paddingLeft: '4px' }}>Team</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
           {[
             { name: 'Mallika', role: 'ML Pipeline' },
             { name: 'Harsh', role: 'Frontend' },
             { name: 'Jivit', role: 'Computer Vision' },
-            { name: 'Divyanshu', role: 'Signal Processing' },
+            { name: 'Divyanshu', role: 'Signals' },
             { name: 'Hemant', role: 'Backend' },
           ].map((member, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: i === 0 ? 'linear-gradient(to right, #00F0FF, #7000FF)' : '#1C2541', display: 'flex', alignItems: 'center', justifyContent: 'center', border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.1)' }}>
-                <User size={12} style={{ color: '#fff' }} />
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px' }}>
+              <div style={{
+                width: '20px', height: '20px', borderRadius: '50%',
+                background: i === 0 ? 'linear-gradient(135deg, #63b3ed, #4299e1)' : '#1a202c',
+                border: i === 0 ? 'none' : '1px solid rgba(255,255,255,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <User size={10} style={{ color: '#fff' }} />
               </div>
-              <div>
-                <span style={{ color: '#fff', fontSize: '0.7rem', fontWeight: 700 }}>{member.name}</span>
-                <span style={{ color: '#6B7280', fontSize: '0.55rem', marginLeft: '6px' }}>{member.role}</span>
-              </div>
+              <span style={{ color: '#a0aec0', fontSize: '0.65rem', fontWeight: 600 }}>{member.name}</span>
+              <span style={{ color: '#4a5568', fontSize: '0.55rem', marginLeft: 'auto' }}>{member.role}</span>
             </div>
           ))}
         </div>
