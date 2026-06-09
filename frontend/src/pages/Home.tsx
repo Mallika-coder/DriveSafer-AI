@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ShieldAlert, Eye, Smartphone, Car, Activity, Brain, Cpu, Layers, Fingerprint, Radar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import DrivingScene from '../components/DrivingScene';
 
 export default function Home() {
   const [, setSessionCount] = useState(0);
@@ -24,21 +25,24 @@ export default function Home() {
 
   return (
     <div className="w-full h-full flex flex-col gap-6 pb-6 overflow-y-auto">
-      {/* Hero */}
+      {/* Hero with Driving Scene */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         style={{
-          background: 'linear-gradient(135deg, #0f1729 0%, #1a1f3a 50%, #0d1321 100%)',
           borderRadius: '24px',
           border: '1px solid rgba(255,255,255,0.06)',
-          padding: '48px',
           position: 'relative',
           overflow: 'hidden',
+          height: '240px',
         }}
       >
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '1px', background: 'linear-gradient(to right, transparent, rgba(99, 179, 237, 0.3), transparent)' }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Driving scene background */}
+        <div style={{ position: 'absolute', inset: 0 }}>
+          <DrivingScene speed={70} alertLevel={0} timeOfDay="night" />
+        </div>
+        {/* Overlay content */}
+        <div style={{ position: 'relative', zIndex: 10, padding: '40px 48px', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'linear-gradient(to right, rgba(10,15,26,0.92) 0%, rgba(10,15,26,0.7) 50%, rgba(10,15,26,0.3) 100%)' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
               <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#48bb78', boxShadow: '0 0 12px #48bb78' }} />

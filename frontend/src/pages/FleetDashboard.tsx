@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Radio, AlertTriangle, Shield, Truck, Clock, MapPin } from 'lucide-react';
 import { fleetManager } from '../utils/fleetManager';
+import DrivingScene from '../components/DrivingScene';
 
 export default function FleetDashboard() {
   const [vehicles, setVehicles] = useState(fleetManager.getVehicles());
@@ -45,6 +46,19 @@ export default function FleetDashboard() {
               <p style={{ color: '#9CA3AF', fontSize: '0.6rem', margin: 0, textTransform: 'uppercase' }}>{s.label}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Road Scene */}
+      <div style={{ height: '160px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)', position: 'relative' }}>
+        <DrivingScene speed={80} alertLevel={summary.critical > 0 ? 2 : 0} timeOfDay="night" />
+        <div style={{ position: 'absolute', top: '12px', left: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <div style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)' }}>
+            <span style={{ color: '#63b3ed', fontSize: '0.6rem', fontWeight: 700 }}>FLEET LIVE VIEW</span>
+          </div>
+          <div style={{ padding: '4px 10px', borderRadius: '6px', backgroundColor: 'rgba(0,0,0,0.7)' }}>
+            <span style={{ color: '#48bb78', fontSize: '0.6rem', fontWeight: 700 }}>{summary.total} VEHICLES ACTIVE</span>
+          </div>
         </div>
       </div>
 

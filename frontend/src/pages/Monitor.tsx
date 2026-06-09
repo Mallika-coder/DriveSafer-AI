@@ -18,6 +18,7 @@ import { predictDrowsiness } from '../utils/tinyMLModel';
 import { DriverProfiler } from '../utils/driverProfiling';
 import { fleetManager } from '../utils/fleetManager';
 import axios from 'axios';
+import DrivingScene from '../components/DrivingScene';
 import { Settings, ShieldAlert, Activity, Eye, Smartphone, Zap, Crosshair, Gauge, Brain, Timer, Headphones, MessageCircle } from 'lucide-react';
 
 interface ChartDataPoint {
@@ -393,12 +394,20 @@ export default function Monitor() {
             </div>
           </div>
 
-          {/* Real-time chart */}
-          <div style={{ backgroundColor: '#111927', borderRadius: '20px', border: '2px solid rgba(255,255,255,0.1)', padding: '16px' }}>
-            <h3 style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 900, fontFamily: 'Orbitron', textTransform: 'uppercase', margin: '0 0 8px', letterSpacing: '0.1em' }}>
-              Signal Time Series
-            </h3>
-            <RealTimeChart data={chartData} earThreshold={earThresh} height={140} />
+          {/* Real-time chart + Driving Scene */}
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ flex: 1, backgroundColor: '#111927', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)', padding: '12px' }}>
+              <h3 style={{ color: '#a0aec0', fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', margin: '0 0 6px', letterSpacing: '0.08em' }}>
+                Signal Time Series
+              </h3>
+              <RealTimeChart data={chartData} earThreshold={earThresh} height={110} />
+            </div>
+            <div style={{ width: '180px', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden', position: 'relative' }}>
+              <DrivingScene speed={60 + drowsiness.score * 0.3} alertLevel={alertLevel} timeOfDay="night" />
+              <div style={{ position: 'absolute', bottom: '6px', left: '6px', padding: '3px 8px', borderRadius: '4px', backgroundColor: 'rgba(0,0,0,0.6)' }}>
+                <span style={{ color: '#a0aec0', fontSize: '0.5rem', fontWeight: 600 }}>ROAD VIEW</span>
+              </div>
+            </div>
           </div>
         </div>
 
