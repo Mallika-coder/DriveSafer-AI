@@ -32,8 +32,6 @@ export default function DrivingScene({ speed = 60, alertLevel = 0, timeOfDay = '
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      const w = canvas.width;
-      const h = canvas.height;
       const dpr = window.devicePixelRatio || 1;
 
       canvas.width = canvas.offsetWidth * dpr;
