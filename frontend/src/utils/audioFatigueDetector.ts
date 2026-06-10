@@ -32,6 +32,7 @@ export class AudioFatigueDetector {
 
   // Baseline learning
   private baselineSpeechRate = 4.0;
+  private baselinePitch = 150;
   private baselinePitchVariance = 30;
   private baselineEnergy = 0.3;
   private baselineSamples = 0;
@@ -141,7 +142,9 @@ export class AudioFatigueDetector {
       : 0;
     const currentPitchVariance = this.computeVariance(this.pitchHistory.slice(-20));
 
-    const slurredSpeech = speechRate > 0 && speechRate < this.baselineSpeechRate * 0.6;
+    const currentPitch = this.pitchHistory.length > 0 ? this.pitchHistory[this.pitchHistory.length - 1] : 0;
+    const pitchDrop = this.baselinePitch > 0 && currentPitch < this.baselinePitch * 0.8;
+    const slurredSpeech = (speechRate > 0 && speechRate < this.baselineSpeechRate * 0.6) || pitchDrop;
     const slowResponse = avgPause > 2000;
     const monotone = currentPitchVariance < this.baselinePitchVariance * 0.4;
 

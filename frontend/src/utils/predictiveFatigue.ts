@@ -26,6 +26,7 @@ interface ScoreEntry {
 export class PredictiveFatigueModel {
   private history: ScoreEntry[] = [];
   private sessionStart = Date.now();
+  private circadianProfile: number[] = [];
 
   constructor() {
     this.sessionStart = Date.now();
@@ -57,8 +58,10 @@ export class PredictiveFatigueModel {
     if (trend.slope > 0.5) factors.push('Rising drowsiness trend');
     if (trend.slope > 1.0) factors.push('Rapidly increasing fatigue');
 
-    // 2. Circadian rhythm contribution
-    const circadianRisk = this.getCircadianRisk(currentHour);
+    // 2. Circadian rhythm contribution (use personalized profile if available)
+    const circadianRisk = this.circadianProfile.length > 0
+      ? this.circadianProfile[currentHour] || this.getCircadianRisk(currentHour)
+      : this.getCircadianRisk(currentHour);
     if (circadianRisk > 0.6) factors.push(`High-risk time of day (${currentHour}:00)`);
 
     // 3. Session duration fatigue
