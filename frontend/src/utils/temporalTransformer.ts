@@ -27,7 +27,6 @@ interface TransformerPrediction {
 }
 
 const SEQ_LEN = 30;
-const D_INPUT = 7;
 const D_MODEL = 16;
 const D_FFN = 32;
 const N_CLASSES = 4;

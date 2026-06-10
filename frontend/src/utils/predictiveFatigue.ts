@@ -26,7 +26,6 @@ interface ScoreEntry {
 export class PredictiveFatigueModel {
   private history: ScoreEntry[] = [];
   private sessionStart = Date.now();
-  private circadianProfile: number[] = [];
 
   constructor() {
     this.sessionStart = Date.now();

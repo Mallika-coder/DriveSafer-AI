@@ -32,7 +32,6 @@ export class AudioFatigueDetector {
 
   // Baseline learning
   private baselineSpeechRate = 4.0;
-  private baselinePitch = 150;
   private baselinePitchVariance = 30;
   private baselineEnergy = 0.3;
   private baselineSamples = 0;
