@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState } from 'react';
-import { LayoutDashboard, MapPin, BarChart3, MessageSquare, Settings, Activity, Clock, Users, Search, Bell } from 'lucide-react';
+import { LayoutDashboard, MapPin, BarChart3, MessageSquare, Settings, Activity, Clock, Users, Search, Bell, X, LogOut, User } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,7 +19,14 @@ const NAV_ITEMS = [
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const [alertCount] = useState(3);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
+
+  const notifications = [
+    { id: 1, text: 'Driver Alpha risk score exceeded 60', time: '2 min ago', type: 'critical' },
+    { id: 2, text: 'Vehicle V-003 route deviation detected', time: '8 min ago', type: 'warning' },
+    { id: 3, text: 'Federated learning round 5 complete', time: '15 min ago', type: 'info' },
+  ];
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', gridTemplateRows: '56px 1fr', height: '100vh', width: '100vw', overflow: 'hidden', background: '#0a0b0f' }}>
@@ -38,14 +45,67 @@ export default function Layout({ children }: LayoutProps) {
         </div>
 
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ position: 'relative', cursor: 'pointer' }}>
-            <Bell size={18} style={{ color: '#64748b' }} />
-            {alertCount > 0 && (
-              <span style={{ position: 'absolute', top: '-4px', right: '-6px', background: '#ef4444', color: '#fff', fontSize: '10px', fontWeight: 600, padding: '1px 5px', borderRadius: '10px' }}>{alertCount}</span>
+          {/* Notifications */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => { setShowNotifications(!showNotifications); setShowProfile(false); }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', position: 'relative', padding: '6px' }}
+            >
+              <Bell size={18} style={{ color: showNotifications ? '#3b82f6' : '#64748b' }} />
+              <span style={{ position: 'absolute', top: '2px', right: '2px', background: '#ef4444', color: '#fff', fontSize: '9px', fontWeight: 600, padding: '1px 4px', borderRadius: '10px' }}>3</span>
+            </button>
+
+            {showNotifications && (
+              <div style={{ position: 'absolute', top: '42px', right: 0, width: '320px', background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', zIndex: 100 }}>
+                <div style={{ padding: '14px 16px', borderBottom: '1px solid #1e293b', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#e2e8f0', fontSize: '13px', fontWeight: 600 }}>Notifications</span>
+                  <button onClick={() => setShowNotifications(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
+                    <X size={14} style={{ color: '#64748b' }} />
+                  </button>
+                </div>
+                <div style={{ maxHeight: '280px', overflowY: 'auto' }}>
+                  {notifications.map(n => (
+                    <div key={n.id} style={{ padding: '12px 16px', borderBottom: '1px solid #1e293b', display: 'flex', gap: '10px', alignItems: 'flex-start', cursor: 'pointer' }}>
+                      <div style={{ width: '8px', height: '8px', borderRadius: '50%', marginTop: '5px', flexShrink: 0, background: n.type === 'critical' ? '#ef4444' : n.type === 'warning' ? '#f59e0b' : '#3b82f6' }} />
+                      <div>
+                        <p style={{ color: '#cbd5e1', fontSize: '12px', margin: 0 }}>{n.text}</p>
+                        <p style={{ color: '#475569', fontSize: '11px', margin: '3px 0 0' }}>{n.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ padding: '10px 16px', borderTop: '1px solid #1e293b', textAlign: 'center' }}>
+                  <Link to="/history" onClick={() => setShowNotifications(false)} style={{ color: '#3b82f6', fontSize: '12px', textDecoration: 'none', fontWeight: 500 }}>View all alerts</Link>
+                </div>
+              </div>
             )}
           </div>
-          <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 600, color: '#fff' }}>
-            MK
+
+          {/* Profile */}
+          <div style={{ position: 'relative' }}>
+            <button
+              onClick={() => { setShowProfile(!showProfile); setShowNotifications(false); }}
+              style={{ background: showProfile ? '#1e3a5f' : '#3b82f6', border: 'none', borderRadius: '50%', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+            >
+              <span style={{ fontSize: '12px', fontWeight: 600, color: '#fff' }}>MK</span>
+            </button>
+
+            {showProfile && (
+              <div style={{ position: 'absolute', top: '42px', right: 0, width: '220px', background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', zIndex: 100 }}>
+                <div style={{ padding: '16px', borderBottom: '1px solid #1e293b' }}>
+                  <p style={{ color: '#e2e8f0', fontSize: '13px', fontWeight: 600, margin: 0 }}>Mallika Verma</p>
+                  <p style={{ color: '#64748b', fontSize: '11px', margin: '4px 0 0' }}>Fleet Admin</p>
+                </div>
+                <div style={{ padding: '6px' }}>
+                  <Link to="/settings" onClick={() => setShowProfile(false)} style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '6px', textDecoration: 'none', color: '#cbd5e1', fontSize: '12px' }}>
+                    <User size={14} style={{ color: '#64748b' }} /> Profile & Settings
+                  </Link>
+                  <button style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 12px', borderRadius: '6px', background: 'none', border: 'none', color: '#ef4444', fontSize: '12px', cursor: 'pointer', width: '100%' }}>
+                    <LogOut size={14} /> Sign Out
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -78,7 +138,7 @@ export default function Layout({ children }: LayoutProps) {
       </nav>
 
       {/* Main Content */}
-      <main style={{ background: '#0f1117', overflow: 'auto', padding: '24px' }}>
+      <main style={{ background: '#0f1117', overflow: 'auto', padding: '24px' }} onClick={() => { setShowNotifications(false); setShowProfile(false); }}>
         {children}
       </main>
     </div>

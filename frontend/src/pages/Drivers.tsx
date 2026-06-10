@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
+import { ChevronDown, ChevronRight, Bell, MapPin, Phone, Shield } from 'lucide-react';
 import { fleetManager } from '../utils/fleetManager';
 
 export default function Drivers() {
   const [vehicles, setVehicles] = useState(fleetManager.getVehicles());
   const [search, setSearch] = useState('');
+  const [expandedDriver, setExpandedDriver] = useState<string | null>(null);
+  const [filter, setFilter] = useState<string>('all');
 
   useEffect(() => {
-    const interval = setInterval(() => setVehicles(fleetManager.getVehicles()), 5000);
+    const interval = setInterval(() => setVehicles(fleetManager.getVehicles()), 3000);
     return () => clearInterval(interval);
   }, []);
 
-  const filtered = vehicles.filter(v =>
-    v.driverName.toLowerCase().includes(search.toLowerCase()) || v.id.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = vehicles
+    .filter(v => filter === 'all' || v.status === filter)
+    .filter(v => v.driverName.toLowerCase().includes(search.toLowerCase()) || v.id.toLowerCase().includes(search.toLowerCase()));
 
   const statusPill = (status: string) => {
     const colors: Record<string, { bg: string; text: string }> = {
@@ -22,52 +25,142 @@ export default function Drivers() {
       offline: { bg: 'rgba(100,116,139,0.15)', text: '#64748b' },
     };
     const c = colors[status] || colors.offline;
-    return <span style={{ display: 'inline-block', padding: '3px 10px', borderRadius: '12px', fontSize: '11px', fontWeight: 500, background: c.bg, color: c.text }}>{status}</span>;
+    return <span style={{ display: 'inline-block', padding: '4px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: 500, background: c.bg, color: c.text }}>{status}</span>;
   };
 
   const riskColor = (score: number) => score > 60 ? '#ef4444' : score > 30 ? '#f59e0b' : '#22c55e';
 
+  const riskBar = (score: number) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div style={{ width: '60px', height: '6px', background: '#1e293b', borderRadius: '3px', overflow: 'hidden' }}>
+        <div style={{ width: `${Math.min(score, 100)}%`, height: '100%', background: riskColor(score), borderRadius: '3px', transition: 'width 0.5s' }} />
+      </div>
+      <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '13px', color: riskColor(score), width: '28px' }}>{Math.round(score)}</span>
+    </div>
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
+      {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', margin: 0 }}>Fleet Drivers</h1>
-          <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0' }}>{vehicles.length} total drivers • {vehicles.filter(v => v.status === 'active').length} active</p>
+          <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0' }}>
+            {vehicles.length} drivers • {vehicles.filter(v => v.status === 'active').length} active •
+            {vehicles.filter(v => v.status === 'critical').length} critical
+          </p>
         </div>
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search drivers..."
-          style={{ background: '#1a1d27', border: '1px solid #2d3748', borderRadius: '8px', padding: '8px 14px', color: '#e2e8f0', fontSize: '13px', width: '240px', outline: 'none' }}
-        />
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+          {/* Filters */}
+          {['all', 'active', 'alert', 'critical'].map(f => (
+            <button
+              key={f}
+              onClick={() => setFilter(f)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '6px',
+                border: filter === f ? '1px solid #3b82f6' : '1px solid #2d3748',
+                background: filter === f ? 'rgba(59,130,246,0.1)' : '#1a1d27',
+                color: filter === f ? '#3b82f6' : '#94a3b8',
+                fontSize: '11px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                textTransform: 'capitalize',
+              }}
+            >
+              {f}
+            </button>
+          ))}
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search..."
+            style={{ background: '#1a1d27', border: '1px solid #2d3748', borderRadius: '8px', padding: '7px 12px', color: '#e2e8f0', fontSize: '12px', width: '160px', outline: 'none' }}
+          />
+        </div>
       </div>
 
+      {/* Table */}
       <div style={{ flex: 1, overflow: 'auto', borderRadius: '10px', border: '1px solid #1e293b' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', background: '#161922' }}>
           <thead>
             <tr style={{ background: '#111318' }}>
-              {['Driver', 'Vehicle', 'Status', 'Risk Score', 'Location', 'Hours Driven', 'Last Alert'].map(h => (
-                <th key={h} style={{ textAlign: 'left', padding: '12px 16px', color: '#64748b', fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #1e293b' }}>{h}</th>
+              <th style={{ width: '30px', padding: '12px 8px' }}></th>
+              {['Driver', 'Vehicle', 'Status', 'Risk', 'Session', 'Actions'].map(h => (
+                <th key={h} style={{ textAlign: 'left', padding: '12px 14px', color: '#64748b', fontWeight: 500, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: '1px solid #1e293b' }}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {filtered.map(v => (
-              <tr key={v.id} style={{ borderBottom: '1px solid #1e293b' }}>
-                <td style={{ padding: '12px 16px', color: '#e2e8f0', fontWeight: 500 }}>{v.driverName}</td>
-                <td style={{ padding: '12px 16px', color: '#94a3b8', fontFamily: 'monospace', fontSize: '11px' }}>{v.id}</td>
-                <td style={{ padding: '12px 16px' }}>{statusPill(v.status)}</td>
-                <td style={{ padding: '12px 16px' }}>
-                  <span style={{ fontFamily: 'monospace', fontWeight: 700, fontSize: '14px', color: riskColor(v.currentScore) }}>
-                    {Math.round(v.currentScore)}
-                  </span>
-                </td>
-                <td style={{ padding: '12px 16px', color: '#94a3b8', fontSize: '11px' }}>En route</td>
-                <td style={{ padding: '12px 16px', color: '#94a3b8', fontFamily: 'monospace' }}>{(v.sessionDuration / 3600).toFixed(1)}h</td>
-                <td style={{ padding: '12px 16px', color: '#475569', fontSize: '11px' }}>
-                  {v.alerts.length > 0 ? new Date(v.alerts[0].timestamp).toLocaleTimeString() : '—'}
-                </td>
-              </tr>
+              <>
+                <tr
+                  key={v.id}
+                  onClick={() => setExpandedDriver(expandedDriver === v.id ? null : v.id)}
+                  style={{ borderBottom: '1px solid #1e293b', cursor: 'pointer', transition: 'background 0.1s' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = '#1a1d27')}
+                  onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <td style={{ padding: '12px 8px', textAlign: 'center' }}>
+                    {expandedDriver === v.id ? <ChevronDown size={14} style={{ color: '#64748b' }} /> : <ChevronRight size={14} style={{ color: '#64748b' }} />}
+                  </td>
+                  <td style={{ padding: '12px 14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: '#1e3a5f', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', fontWeight: 600, color: '#93c5fd' }}>
+                        {v.driverName.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <span style={{ color: '#e2e8f0', fontWeight: 500 }}>{v.driverName}</span>
+                    </div>
+                  </td>
+                  <td style={{ padding: '12px 14px', color: '#94a3b8', fontFamily: 'monospace', fontSize: '11px' }}>{v.id}</td>
+                  <td style={{ padding: '12px 14px' }}>{statusPill(v.status)}</td>
+                  <td style={{ padding: '12px 14px' }}>{riskBar(v.currentScore)}</td>
+                  <td style={{ padding: '12px 14px', color: '#94a3b8', fontFamily: 'monospace' }}>{Math.round(v.sessionDuration / 60)}m</td>
+                  <td style={{ padding: '12px 14px' }}>
+                    <div style={{ display: 'flex', gap: '6px' }} onClick={e => e.stopPropagation()}>
+                      <button title="Send Alert" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <Bell size={12} style={{ color: '#f59e0b' }} />
+                      </button>
+                      <button title="Track Location" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <MapPin size={12} style={{ color: '#3b82f6' }} />
+                      </button>
+                      <button title="Call Driver" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <Phone size={12} style={{ color: '#22c55e' }} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                {/* Expanded Detail */}
+                {expandedDriver === v.id && (
+                  <tr key={`${v.id}-detail`} style={{ background: '#0f1117' }}>
+                    <td colSpan={7} style={{ padding: '16px 20px 16px 52px' }}>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '14px' }}>
+                        <div style={{ background: '#161922', borderRadius: '8px', padding: '12px 16px', border: '1px solid #1e293b' }}>
+                          <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Risk Score</div>
+                          <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'monospace', color: riskColor(v.currentScore) }}>{Math.round(v.currentScore)}/100</div>
+                        </div>
+                        <div style={{ background: '#161922', borderRadius: '8px', padding: '12px 16px', border: '1px solid #1e293b' }}>
+                          <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Alerts</div>
+                          <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'monospace', color: '#fff' }}>{v.alerts.length}</div>
+                        </div>
+                        <div style={{ background: '#161922', borderRadius: '8px', padding: '12px 16px', border: '1px solid #1e293b' }}>
+                          <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Drive Time</div>
+                          <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'monospace', color: '#fff' }}>{(v.sessionDuration / 3600).toFixed(1)}h</div>
+                        </div>
+                        <div style={{ background: '#161922', borderRadius: '8px', padding: '12px 16px', border: '1px solid #1e293b' }}>
+                          <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>Safety Rating</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Shield size={16} style={{ color: v.currentScore < 30 ? '#22c55e' : '#f59e0b' }} />
+                            <span style={{ fontSize: '14px', fontWeight: 600, color: v.currentScore < 30 ? '#22c55e' : '#f59e0b' }}>
+                              {v.currentScore < 20 ? 'Excellent' : v.currentScore < 40 ? 'Good' : v.currentScore < 60 ? 'Fair' : 'Poor'}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
           </tbody>
         </table>
