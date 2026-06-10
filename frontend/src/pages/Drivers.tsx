@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChevronDown, ChevronRight, Bell, MapPin, Phone, Shield } from 'lucide-react';
+import { ChevronDown, ChevronRight, Bell, MapPin, Phone, Shield, CheckCircle } from 'lucide-react';
 import { fleetManager } from '../utils/fleetManager';
 
 export default function Drivers() {
@@ -7,6 +7,19 @@ export default function Drivers() {
   const [search, setSearch] = useState('');
   const [expandedDriver, setExpandedDriver] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
+  const [actionFeedback, setActionFeedback] = useState<string | null>(null);
+
+  const handleAction = (action: string, vehicleId: string, driverName: string) => {
+    if (action === 'alert') {
+      const result = fleetManager.sendAlertToDriver(vehicleId);
+      setActionFeedback(result);
+    } else if (action === 'track') {
+      setActionFeedback(`Tracking ${driverName} — location updated`);
+    } else if (action === 'call') {
+      setActionFeedback(`Calling ${driverName}...`);
+    }
+    setTimeout(() => setActionFeedback(null), 3000);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => setVehicles(fleetManager.getVehicles()), 3000);
@@ -40,7 +53,14 @@ export default function Drivers() {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', position: 'relative' }}>
+      {/* Action Feedback Toast */}
+      {actionFeedback && (
+        <div style={{ position: 'absolute', top: '8px', right: '8px', background: '#161922', border: '1px solid #22c55e', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '8px', zIndex: 100, boxShadow: '0 4px 20px rgba(0,0,0,0.4)' }}>
+          <CheckCircle size={14} style={{ color: '#22c55e' }} />
+          <span style={{ color: '#e2e8f0', fontSize: '12px' }}>{actionFeedback}</span>
+        </div>
+      )}
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
@@ -118,13 +138,13 @@ export default function Drivers() {
                   <td style={{ padding: '12px 14px', color: '#94a3b8', fontFamily: 'monospace' }}>{Math.round(v.sessionDuration / 60)}m</td>
                   <td style={{ padding: '12px 14px' }}>
                     <div style={{ display: 'flex', gap: '6px' }} onClick={e => e.stopPropagation()}>
-                      <button title="Send Alert" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <button onClick={() => handleAction('alert', v.id, v.driverName)} title="Send Alert" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                         <Bell size={12} style={{ color: '#f59e0b' }} />
                       </button>
-                      <button title="Track Location" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <button onClick={() => handleAction('track', v.id, v.driverName)} title="Track Location" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                         <MapPin size={12} style={{ color: '#3b82f6' }} />
                       </button>
-                      <button title="Call Driver" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                      <button onClick={() => handleAction('call', v.id, v.driverName)} title="Call Driver" style={{ width: '28px', height: '28px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                         <Phone size={12} style={{ color: '#22c55e' }} />
                       </button>
                     </div>
