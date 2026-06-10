@@ -292,7 +292,7 @@ export default function Monitor() {
         setAlertLevel(0);
         stopAlarm();
         cooldownActive.current = false;
-      }, 5000);
+      }, 10000);
     }
   }, [headPose.pitch, headPose.yaw, headPose.isDistracted, marThresh, sessionId, triggerAlert, stopAlarm]);
 
