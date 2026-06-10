@@ -1,154 +1,175 @@
 import { useState, useEffect } from 'react';
-import { BarChart3, Brain, Clock, AlertTriangle, Target } from 'lucide-react';
+import { BarChart3, Brain, TrendingUp, AlertTriangle, Shield, Cpu } from 'lucide-react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from 'recharts';
-import axios from 'axios';
+import { fleetManager } from '../utils/fleetManager';
+import { FederatedLearningSimulator } from '../utils/federatedLearning';
 
-interface SessionData {
-  id: number;
-  start_time: string;
-  end_time: string | null;
-  duration: number;
-  total_distance: number;
-  events: { event_type: string; severity: number; ear_value: number; timestamp: string }[];
-}
+const flSim = new FederatedLearningSimulator();
 
 export default function Analytics() {
-  const [sessions, setSessions] = useState<SessionData[]>([]);
-  const [, setLoading] = useState(true);
+  const [flStatus, setFlStatus] = useState(flSim.getStatus());
+  const [alerts, setAlerts] = useState(fleetManager.getAlerts());
+  const [vehicles, setVehicles] = useState(fleetManager.getVehicles());
+  const [trendData, setTrendData] = useState<{ time: string; risk: number; alerts: number }[]>([]);
 
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    axios.get(`${apiUrl}/api/sessions`)
-      .then(res => setSessions(res.data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    const interval = setInterval(() => {
+      setAlerts(fleetManager.getAlerts());
+      setVehicles(fleetManager.getVehicles());
+
+      // Build trend from vehicle history
+      setTrendData(prev => {
+        const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const summary = fleetManager.getFleetRiskSummary();
+        const next = [...prev, { time: now, risk: Math.round(summary.avgScore), alerts: summary.totalAlerts }];
+        return next.slice(-20);
+      });
+    }, 5000);
+    return () => clearInterval(interval);
   }, []);
 
-  const totalEvents = sessions.reduce((sum, s) => sum + (s.events?.length || 0), 0);
-  const totalDuration = sessions.reduce((sum, s) => sum + s.duration, 0);
-  const avgEventsPerSession = sessions.length > 0 ? (totalEvents / sessions.length).toFixed(1) : '0';
+  const runFLRound = async () => {
+    const status = await flSim.runOneRound();
+    setFlStatus(status);
+  };
 
-  const eventsByType = sessions.flatMap(s => s.events || []).reduce((acc, e) => {
-    acc[e.event_type] = (acc[e.event_type] || 0) + 1;
+  // Event type distribution from alerts
+  const eventTypes = alerts.reduce((acc, a) => {
+    const type = a.alertType.replace(/_/g, ' ');
+    acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
+  const pieData = Object.entries(eventTypes).map(([name, value]) => ({ name, value }));
+  const COLORS = ['#3b82f6', '#ef4444', '#f59e0b', '#22c55e', '#8b5cf6'];
 
-  const pieData = Object.entries(eventsByType).map(([name, value]) => ({ name, value }));
-  const COLORS = ['#00F0FF', '#FF007F', '#FFE600', '#7000FF', '#00FF66'];
-
-  const sessionTrend = sessions.slice(0, 10).reverse().map((s, i) => ({
-    session: `S${i + 1}`,
-    events: s.events?.length || 0,
-    duration: Math.round(s.duration / 60),
-    severity: s.events?.reduce((sum, e) => sum + e.severity, 0) || 0,
-  }));
-
-  const riskDistribution = [
-    { range: 'Safe (0-20)', count: 0 },
-    { range: 'Mild (20-45)', count: 0 },
-    { range: 'Moderate (45-70)', count: 0 },
-    { range: 'Severe (70-100)', count: 0 },
-  ];
-
-  sessions.flatMap(s => s.events || []).forEach(e => {
-    if (e.severity === 1) riskDistribution[1].count++;
-    else if (e.severity === 2) riskDistribution[2].count++;
-    else if (e.severity === 3) riskDistribution[3].count++;
-    else riskDistribution[0].count++;
-  });
+  const summary = fleetManager.getFleetRiskSummary();
 
   return (
-    <div className="flex flex-col h-full animate-fade-in w-full pb-8 gap-10">
-      {/* Header */}
-      <div style={{ backgroundColor: '#111927', padding: '48px', borderRadius: '40px', border: '2px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '3.75rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', margin: 0, textTransform: 'uppercase' }}>
-            ML <span style={{ background: 'linear-gradient(to right, #00F0FF, #7000FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Analytics</span>
-          </h1>
-          <p style={{ fontSize: '1.25rem', fontWeight: 700, color: '#9CA3AF', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Brain size={24} style={{ color: '#FF007F' }} /> Multi-signal drowsiness pattern analysis
-          </p>
-        </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', height: '100%', overflow: 'auto' }}>
+      <div>
+        <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', margin: 0 }}>ML Analytics & Intelligence</h1>
+        <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0' }}>Real-time fleet data, model performance, and federated learning status</p>
       </div>
 
-      {/* KPI Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
         {[
-          { icon: BarChart3, label: 'Total Sessions', value: sessions.length.toString(), color: '#00F0FF' },
-          { icon: AlertTriangle, label: 'Total Events', value: totalEvents.toString(), color: '#FF2A2A' },
-          { icon: Target, label: 'Avg Events/Session', value: avgEventsPerSession, color: '#FFE600' },
-          { icon: Clock, label: 'Total Drive Time', value: `${Math.round(totalDuration / 60)}m`, color: '#00FF66' },
+          { label: 'Fleet Risk', value: `${Math.round(summary.avgScore)}%`, icon: AlertTriangle, color: '#f59e0b' },
+          { label: 'Total Alerts', value: summary.totalAlerts.toString(), icon: Shield, color: '#ef4444' },
+          { label: 'Active Vehicles', value: summary.total.toString(), icon: Brain, color: '#3b82f6' },
+          { label: 'FL Accuracy', value: `${Math.round(flStatus.globalAccuracy * 100)}%`, icon: Cpu, color: '#22c55e' },
         ].map((kpi, i) => (
-          <div key={i} style={{ backgroundColor: '#111927', padding: '32px', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)' }}>
-            <kpi.icon size={28} style={{ color: kpi.color, marginBottom: '12px' }} />
-            <p style={{ color: '#6B7280', fontSize: '0.875rem', fontWeight: 700, textTransform: 'uppercase', margin: 0 }}>{kpi.label}</p>
-            <p style={{ color: '#fff', fontSize: '2.5rem', fontWeight: 900, fontFamily: 'Orbitron', margin: '8px 0 0' }}>{kpi.value}</p>
+          <div key={i} style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '16px 18px' }}>
+            <kpi.icon size={16} style={{ color: kpi.color, marginBottom: '8px' }} />
+            <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>{kpi.label}</div>
+            <div style={{ fontSize: '24px', fontWeight: 700, fontFamily: 'monospace', color: '#fff' }}>{kpi.value}</div>
           </div>
         ))}
       </div>
 
-      {/* Charts Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', flexGrow: 1, minHeight: 0 }}>
-        {/* Session Trend */}
-        <div style={{ backgroundColor: '#111927', padding: '32px', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ color: '#fff', fontFamily: 'Orbitron', fontWeight: 900, fontSize: '1rem', marginBottom: '24px', textTransform: 'uppercase' }}>
-            Session Risk Trend
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px', minHeight: '280px' }}>
+        {/* Risk Trend */}
+        <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '18px' }}>
+          <h3 style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <TrendingUp size={14} style={{ color: '#3b82f6' }} /> Fleet Risk Trend (Live)
           </h3>
-          {sessionTrend.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={sessionTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="session" stroke="#6B7280" fontSize={12} />
-                <YAxis stroke="#6B7280" fontSize={12} />
-                <Tooltip
-                  contentStyle={{ backgroundColor: '#1C2541', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                  labelStyle={{ color: '#fff' }}
-                />
-                <Area type="monotone" dataKey="events" stroke="#FF007F" fill="rgba(255, 0, 127, 0.2)" strokeWidth={2} />
-                <Area type="monotone" dataKey="severity" stroke="#FFE600" fill="rgba(255, 230, 0, 0.1)" strokeWidth={2} />
+          {trendData.length > 2 ? (
+            <ResponsiveContainer width="100%" height={200}>
+              <AreaChart data={trendData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+                <XAxis dataKey="time" stroke="#475569" fontSize={10} />
+                <YAxis stroke="#475569" fontSize={10} />
+                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #2d3748', borderRadius: '6px', fontSize: '11px' }} />
+                <Area type="monotone" dataKey="risk" stroke="#3b82f6" fill="rgba(59,130,246,0.1)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ color: '#6B7280', fontStyle: 'italic' }}>Start monitoring to collect analytics data</p>
+            <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '12px' }}>
+              Collecting trend data...
             </div>
           )}
         </div>
 
         {/* Event Distribution */}
-        <div style={{ backgroundColor: '#111927', padding: '32px', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ color: '#fff', fontFamily: 'Orbitron', fontWeight: 900, fontSize: '1rem', marginBottom: '24px', textTransform: 'uppercase' }}>
-            Event Distribution
+        <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '18px' }}>
+          <h3 style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <BarChart3 size={14} style={{ color: '#f59e0b' }} /> Alert Distribution
           </h3>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={200}>
               <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
-                  {pieData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                  ))}
+                <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label={({ name, value }) => `${name}: ${value}`} labelLine={false}>
+                  {pieData.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                 </Pie>
-                <Tooltip contentStyle={{ backgroundColor: '#1C2541', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #2d3748', borderRadius: '6px', fontSize: '11px' }} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <p style={{ color: '#6B7280', fontStyle: 'italic' }}>No events recorded yet</p>
+            <div style={{ height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#475569', fontSize: '12px' }}>
+              No alerts yet — start monitoring
             </div>
           )}
         </div>
       </div>
 
-      {/* Risk Distribution */}
-      <div style={{ backgroundColor: '#111927', padding: '32px', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)' }}>
-        <h3 style={{ color: '#fff', fontFamily: 'Orbitron', fontWeight: 900, fontSize: '1rem', marginBottom: '24px', textTransform: 'uppercase' }}>
-          Severity Distribution
-        </h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-          {riskDistribution.map((r, i) => (
-            <div key={i} style={{ backgroundColor: 'rgba(0,0,0,0.3)', padding: '24px', borderRadius: '16px', textAlign: 'center' }}>
-              <p style={{ color: '#9CA3AF', fontSize: '0.75rem', textTransform: 'uppercase', margin: '0 0 8px' }}>{r.range}</p>
-              <p style={{ color: COLORS[i], fontSize: '2rem', fontWeight: 900, fontFamily: 'monospace', margin: 0 }}>{r.count}</p>
+      {/* Federated Learning Section */}
+      <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '18px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '12px', color: '#94a3b8', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Cpu size={14} style={{ color: '#8b5cf6' }} /> Federated Learning — Privacy-Preserving Model Training
+          </h3>
+          <button
+            onClick={runFLRound}
+            disabled={flSim.isComplete()}
+            style={{ padding: '6px 14px', borderRadius: '6px', background: flSim.isComplete() ? '#1e293b' : '#3b82f6', border: 'none', color: '#fff', fontSize: '11px', fontWeight: 500, cursor: flSim.isComplete() ? 'default' : 'pointer' }}
+          >
+            {flSim.isComplete() ? 'Training Complete' : `Run Round ${flStatus.currentRound + 1}`}
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+          {[
+            { label: 'Round', value: `${flStatus.currentRound}/${flStatus.totalRounds}` },
+            { label: 'Global Accuracy', value: `${Math.round(flStatus.globalAccuracy * 100)}%` },
+            { label: 'Local Accuracy', value: `${Math.round(flStatus.localAccuracy * 100)}%` },
+            { label: 'Privacy Budget', value: `${Math.round(flStatus.privacyBudgetUsed * 100)}% used` },
+            { label: 'Participants', value: `${flStatus.participantsThisRound} drivers` },
+          ].map((stat, i) => (
+            <div key={i} style={{ background: '#0f1117', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', color: '#64748b', textTransform: 'uppercase', marginBottom: '4px' }}>{stat.label}</div>
+              <div style={{ fontSize: '16px', fontWeight: 700, fontFamily: 'monospace', color: '#e2e8f0' }}>{stat.value}</div>
+            </div>
+          ))}
+        </div>
+
+        {flStatus.currentRound > 0 && (
+          <div style={{ marginTop: '12px', padding: '10px 14px', background: '#0f1117', borderRadius: '8px', border: '1px solid #1e293b' }}>
+            <p style={{ color: '#94a3b8', fontSize: '11px', margin: 0, lineHeight: 1.5 }}>
+              FedAvg aggregation with differential privacy (ε-DP). {flStatus.currentRound} rounds completed.
+              Model improves across {flStatus.participantsThisRound} drivers without sharing raw sensor data.
+              Privacy budget: {Math.round(flStatus.privacyBudgetUsed * 100)}% consumed (Gaussian noise σ applied per round).
+            </p>
+          </div>
+        )}
+      </div>
+
+      {/* Driver Risk Distribution */}
+      <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '18px' }}>
+        <h3 style={{ fontSize: '12px', color: '#94a3b8', margin: '0 0 14px' }}>Driver Risk Distribution (Live)</h3>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          {vehicles.map(v => (
+            <div key={v.id} style={{ flex: 1, background: '#0f1117', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+              <div style={{ fontSize: '10px', color: '#64748b', marginBottom: '8px' }}>{v.driverName}</div>
+              <div style={{ width: '100%', height: '60px', display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }}>
+                <div style={{
+                  width: '24px',
+                  height: `${Math.max(4, v.currentScore * 0.6)}px`,
+                  background: v.currentScore > 60 ? '#ef4444' : v.currentScore > 30 ? '#f59e0b' : '#22c55e',
+                  borderRadius: '4px 4px 0 0',
+                  transition: 'height 0.5s',
+                }} />
+              </div>
+              <div style={{ fontSize: '12px', fontWeight: 700, fontFamily: 'monospace', color: '#e2e8f0', marginTop: '4px' }}>{Math.round(v.currentScore)}</div>
             </div>
           ))}
         </div>

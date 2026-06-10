@@ -48,10 +48,10 @@ export class FleetManager {
 
   private initSimulatedFleet() {
     const simDrivers = [
-      { id: 'V-001', driverId: 'D-001', name: 'Rajesh Kumar', score: 12, plate: 'MH-04-AB-1234', location: 'NH-48, Pune', phone: '+91 98765 43210' },
-      { id: 'V-002', driverId: 'D-002', name: 'Amit Sharma', score: 8, plate: 'DL-01-CD-5678', location: 'NH-44, Delhi', phone: '+91 87654 32109' },
-      { id: 'V-003', driverId: 'D-003', name: 'Priya Patel', score: 35, plate: 'GJ-05-EF-9012', location: 'NH-8, Ahmedabad', phone: '+91 76543 21098' },
-      { id: 'V-004', driverId: 'D-004', name: 'Vikram Singh', score: 5, plate: 'RJ-14-GH-3456', location: 'NH-48, Jaipur', phone: '+91 65432 10987' },
+      { id: 'V-001', driverId: 'D-001', name: 'Driver Alpha', score: 12, plate: 'FL-01-A-0001', location: 'Route A, Sector 1', phone: '+91 98765 XXXXX' },
+      { id: 'V-002', driverId: 'D-002', name: 'Driver Beta', score: 8, plate: 'FL-02-B-0002', location: 'Route B, Sector 3', phone: '+91 87654 XXXXX' },
+      { id: 'V-003', driverId: 'D-003', name: 'Driver Gamma', score: 35, plate: 'FL-03-C-0003', location: 'Route C, Highway', phone: '+91 76543 XXXXX' },
+      { id: 'V-004', driverId: 'D-004', name: 'Driver Delta', score: 5, plate: 'FL-04-D-0004', location: 'Route D, Sector 7', phone: '+91 65432 XXXXX' },
     ];
 
     simDrivers.forEach(d => {
