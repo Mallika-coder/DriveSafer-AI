@@ -266,5 +266,46 @@ FleetMind AI — AI Fleet Intelligence Platform
 
 ---
 
+## 11. What's Real vs Simulated (Be Transparent)
+
+| Component | Real or Simulated | How to prove |
+|-----------|-------------------|-------------|
+| Webcam face detection | **REAL** | Open /monitor — your camera activates, landmarks appear on your face |
+| EAR/MAR/PERCLOS numbers | **REAL** | Close eyes → EAR drops to ~0.15; open mouth → MAR rises |
+| Head pose (pitch/yaw/roll) | **REAL** | Tilt head → numbers change immediately |
+| Phone detection | **REAL** | Hold phone (any angle) → "PHONE DETECTED" |
+| Talking vs yawn discrimination | **REAL** | Talk normally → no alert; hold mouth open 3s → alert fires |
+| AI Chat | **REAL LLM** | Ask different questions → get different answers with live fleet data |
+| Your vehicle in fleet | **REAL** | Open /monitor first → then go to / → see "You (Live)" with your actual score |
+| Predictive fatigue | **REAL** | Uses YOUR score trend + time of day for prediction |
+| Other 4 fleet drivers | **SIMULATED** | Labeled clearly — demonstrates dashboard at scale |
+| Federated learning | **SIMULATION** | Click "Run Round" → shows algorithm working, not cross-device |
+| Notifications | **SEMI-REAL** | Triggered by actual events, but initial 3 are examples |
+
+**What to say to a judge:**
+> "The driver monitoring ML is 100% real — it runs 17 modules on your actual face at 30fps in the browser. The fleet data simulates other drivers to show how this scales to a real fleet. The AI chat connects to a real language model that sees live fleet state. In production, each vehicle would run the same webcam pipeline and stream scores to the central dashboard."
+
+---
+
+## 12. Design System
+
+| Element | Value |
+|---------|-------|
+| Background | #07090f (deep dark) |
+| Cards | #0d1017 with #1a1f2e borders |
+| Accent | Indigo/violet (#818cf8, #6366f1) |
+| Success | #10b981 (green) |
+| Warning | #f59e0b (amber) |
+| Danger | #ef4444 (red) |
+| Text primary | #f3f4f6 |
+| Text secondary | #6b7280 |
+| Data font | JetBrains Mono |
+| UI font | Inter |
+| KPI cards | Colored top-accent line |
+| Active nav | Gradient background + border |
+| Live indicator | Pulsing green dot |
+
+---
+
 *Project: https://github.com/Mallika-coder/DriveSafer-AI*
 *Live: https://drive-safer-ai.vercel.app*
