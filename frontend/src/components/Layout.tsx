@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LayoutDashboard, MapPin, BarChart3, MessageSquare, Settings, Activity, Clock, Users, Search, Bell, X, LogOut, User } from 'lucide-react';
+import { fleetManager } from '../utils/fleetManager';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,12 +22,28 @@ export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [notifications, setNotifications] = useState<{ id: number; text: string; time: string; type: string }[]>([]);
 
-  const notifications = [
-    { id: 1, text: 'Driver Gamma risk score exceeded 55 — monitoring', time: '2 min ago', type: 'warning' },
-    { id: 2, text: 'Your session: PERCLOS elevated for 4 seconds', time: '5 min ago', type: 'critical' },
-    { id: 3, text: 'Federated learning round completed (acc: 78%)', time: '12 min ago', type: 'info' },
-  ];
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const alerts = fleetManager.getAlerts();
+      const notifs = alerts.slice(0, 5).map((a, i) => ({
+        id: i,
+        text: `${a.vehicleId === 'V-SELF' ? 'You' : a.vehicleId}: ${a.alertType.replace(/_/g, ' ')} (score: ${Math.round(a.drowsinessScore)})`,
+        time: getTimeAgo(a.timestamp),
+        type: a.severity >= 3 ? 'critical' : a.severity >= 2 ? 'warning' : 'info',
+      }));
+      setNotifications(notifs);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const getTimeAgo = (timestamp: number) => {
+    const diff = Math.floor((Date.now() - timestamp) / 1000);
+    if (diff < 60) return `${diff}s ago`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    return `${Math.floor(diff / 3600)}h ago`;
+  };
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '64px 1fr', gridTemplateRows: '52px 1fr', height: '100vh', width: '100vw', overflow: 'hidden', background: '#07090f' }}>
@@ -58,7 +75,7 @@ export default function Layout({ children }: LayoutProps) {
               style={{ background: showNotifications ? 'rgba(99,102,241,0.1)' : 'none', border: showNotifications ? '1px solid rgba(99,102,241,0.3)' : '1px solid transparent', borderRadius: '8px', cursor: 'pointer', position: 'relative', padding: '7px', display: 'flex', alignItems: 'center' }}
             >
               <Bell size={16} style={{ color: showNotifications ? '#818cf8' : '#6b7280' }} />
-              <span style={{ position: 'absolute', top: '3px', right: '3px', background: '#ef4444', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>3</span>
+              {notifications.length > 0 && <span style={{ position: 'absolute', top: '3px', right: '3px', background: '#ef4444', color: '#fff', fontSize: '8px', fontWeight: 700, width: '14px', height: '14px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{notifications.length}</span>}
             </button>
 
             {showNotifications && (

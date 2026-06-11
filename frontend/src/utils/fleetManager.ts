@@ -43,7 +43,25 @@ export class FleetManager {
 
   constructor() {
     this.initSimulatedFleet();
+    this.loadSelfFromStorage();
     this.startSimulation();
+  }
+
+  private loadSelfFromStorage() {
+    const stored = localStorage.getItem('fleetmind_self_vehicle');
+    if (stored) {
+      const data = JSON.parse(stored);
+      if (Date.now() - data.lastUpdate < 3600000) {
+        this.vehicles.set('V-SELF', { ...data, isLive: false });
+      }
+    }
+  }
+
+  private saveSelfToStorage() {
+    const self = this.vehicles.get('V-SELF');
+    if (self) {
+      localStorage.setItem('fleetmind_self_vehicle', JSON.stringify(self));
+    }
   }
 
   private initSimulatedFleet() {
@@ -164,6 +182,7 @@ export class FleetManager {
         isLive: true,
       });
     }
+    this.saveSelfToStorage();
   }
 
   sendAlertToDriver(vehicleId: string): string {
