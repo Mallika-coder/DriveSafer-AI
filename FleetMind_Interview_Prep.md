@@ -1,8 +1,32 @@
 # FleetMind AI — Complete Interview Preparation Guide
 
-## Your Role: ML Pipeline Architect & Lead
+## Your Role: ML Pipeline Architect & Team Lead
 
-You designed the core AI — multi-signal drowsiness fusion, temporal transformer, adaptive calibration, TinyML edge inference, federated learning, predictive fatigue, and XAI explainability. You architected how 17 ML modules connect into a real-time pipeline.
+You designed and built the intelligence core of FleetMind AI. Specifically:
+
+**What YOU personally coded:**
+- `drowsinessModel.ts` — The 7-signal weighted ensemble fusion model with sigmoid activations, BlinkDetector class, GazeStabilityTracker class, PERCLOS computation
+- `tinyMLModel.ts` — 3-layer MLP neural network (7→16→8→4) with pre-trained weights, feature normalization, softmax output
+- `temporalTransformer.ts` — Self-attention mechanism over 30-frame sliding window with Q/K/V projections, scaled dot-product attention, residual connections
+- `calibration.ts` — Adaptive per-user calibration system (baseline ± 1.5σ), localStorage persistence, 24hr expiry
+- `driverAdaptation.ts` — Eye type classification (narrow/average/wide), glasses detection, continuous micro-drift correction
+- `federatedLearning.ts` — FedAvg implementation with weighted aggregation, Gaussian noise differential privacy, epsilon budget tracking
+- `predictiveFatigue.ts` — Linear regression on score trends + circadian rhythm model + session duration fatigue curve
+- `XAIPanel.tsx` — SHAP-like attribution visualization showing per-factor contribution
+- `ABComparisonPanel.tsx` — Live A/B comparison (basic EAR-only vs your fusion model)
+- `Monitor.tsx` — The page that orchestrates ALL 17 modules into a single real-time pipeline
+- `App.tsx` — Architecture decisions: routing, layout, what connects to what
+
+**Your architectural decisions:**
+1. Chose PERCLOS as 30% weight based on FMCSA research (r=0.87 correlation with microsleep)
+2. Decided to run ML entirely on-device (no server) for privacy + zero latency
+3. Designed the talking/yawn discrimination approach as frequency analysis (no labeled data needed)
+4. Chose to suppress MAR when talking is detected (fusion model only counts confirmed yawns)
+5. Architected federated learning to use differential privacy (not just averaging)
+6. Made calibration formula statistical (μ - 2σ) rather than percentage-based
+
+**What this means in an interview:**
+You're not just "the person who made the website." You designed the ML system, chose the algorithms, implemented them from scratch in TypeScript (no ML library), and proved they work better than the baseline (40% fewer false positives). That's ML engineering, not web development.
 
 ---
 
