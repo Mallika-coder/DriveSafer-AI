@@ -57,7 +57,7 @@ export function useAlertSound() {
     return audioCtxRef.current;
   }, []);
 
-  const playTone = useCallback((frequency: number, duration: number, volume: number) => {
+  const playTone = useCallback((frequency: number, duration: number, volume: number, type: OscillatorType = 'sine') => {
     const ctx = getAudioCtx();
     if (!ctx) return;
 
@@ -65,13 +65,14 @@ export function useAlertSound() {
       const oscillator = ctx.createOscillator();
       const gainNode = ctx.createGain();
 
-      oscillator.type = 'sine';
+      oscillator.type = type;
       oscillator.frequency.setValueAtTime(frequency, ctx.currentTime);
 
+      // Smooth envelope — no harsh clicks
       gainNode.gain.setValueAtTime(0.001, ctx.currentTime);
-      gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.03);
-      gainNode.gain.setValueAtTime(volume, ctx.currentTime + duration - 0.05);
-      gainNode.gain.linearRampToValueAtTime(0.001, ctx.currentTime + duration);
+      gainNode.gain.linearRampToValueAtTime(volume, ctx.currentTime + 0.05);
+      gainNode.gain.setValueAtTime(volume, ctx.currentTime + duration - 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
       oscillator.connect(gainNode);
       gainNode.connect(ctx.destination);
@@ -147,18 +148,20 @@ export function useAlertSound() {
         stopContinuousAlarm();
         break;
       case 1:
-        // Single clear beep
+        // Sweet gentle chime — pleasant notification, not alarming
         stopContinuousAlarm();
-        playTone(520, 0.6, 0.5);
+        playTone(660, 0.15, 0.3, 'sine');
+        setTimeout(() => playTone(880, 0.2, 0.25, 'sine'), 180);
         break;
       case 2:
-        // Double beep — unmistakable warning
+        // Firm double tone — clear but not harsh
         stopContinuousAlarm();
-        playBeepPattern([600, 750], [0.4, 0.4], 0.65);
-        if ("vibrate" in navigator) navigator.vibrate(300);
+        playTone(550, 0.3, 0.5, 'sine');
+        setTimeout(() => playTone(700, 0.3, 0.5, 'sine'), 350);
+        if ("vibrate" in navigator) navigator.vibrate(200);
         break;
       case 3:
-        // Continuous alarm — urgent
+        // LOUD continuous alarm — this is the real danger alert
         startContinuousAlarm();
         if ("vibrate" in navigator) navigator.vibrate([400, 200, 400, 200, 400]);
         break;

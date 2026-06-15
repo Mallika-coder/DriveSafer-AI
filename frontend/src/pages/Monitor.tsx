@@ -209,14 +209,14 @@ export default function Monitor() {
     let currentLevel = 0;
     let msg = "";
 
-    // Use composite score for alerting
-    if (drowsinessResult.score > 70) {
+    // Use composite score for alerting (thresholds tuned to avoid false alarms)
+    if (drowsinessResult.score > 75) {
       currentLevel = 3;
       msg = "Critical: Multi-signal drowsiness detected!";
-    } else if (drowsinessResult.score > 45) {
+    } else if (drowsinessResult.score > 55) {
       currentLevel = 2;
       msg = "Warning: Moderate fatigue indicators.";
-    } else if (drowsinessResult.score > 20) {
+    } else if (drowsinessResult.score > 35) {
       currentLevel = 1;
       msg = "Mild drowsiness detected.";
     }
@@ -247,7 +247,8 @@ export default function Monitor() {
       msg = "Cognitive distraction detected — attention divided.";
     }
 
-    if (headPose.isDistracted && currentLevel < 2) {
+    // Head pose — only trigger if SIGNIFICANTLY off (not just glancing down)
+    if (headPose.isDistracted && Math.abs(headPose.pitch) > 20 && currentLevel < 2) {
       currentLevel = 2;
       msg = "Attention: Eyes off road — head position unsafe.";
     }
