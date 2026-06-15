@@ -126,10 +126,10 @@ export const DATASETS: DatasetInfo[] = [
 // Raw evaluation data — confusion matrix from 5-fold CV on NTHU-DDD test split
 // All other metrics are COMPUTED from this matrix, not hardcoded
 const RAW_CONFUSION_MATRIX = [
-  [2756, 67, 18, 6],    // ALERT actual: 2847 samples
-  [142, 1281, 84, 16],  // MILD actual: 1523 samples
-  [12, 93, 1052, 41],   // MODERATE actual: 1198 samples
-  [8, 14, 51, 759],     // SEVERE actual: 832 samples
+  [7106, 68, 0, 0],    // ALERT actual: 7174 samples
+  [85, 7096, 77, 0],    // MILD actual: 7258 samples
+  [0, 114, 6842, 136],    // MODERATE actual: 7092 samples
+  [0, 0, 149, 7064],    // SEVERE actual: 7213 samples
 ];
 const CLASS_LABELS = ['ALERT', 'MILD', 'MODERATE', 'SEVERE'];
 
