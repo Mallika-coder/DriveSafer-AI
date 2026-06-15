@@ -129,9 +129,9 @@ function MetricsTab() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {[
               '5-fold stratified cross-validation on NTHU-DDD',
-              'Cross-dataset: Train NTHU → Test UTA-RLDD (84.7%)',
+              `Cross-dataset: Train NTHU → Test UTA-RLDD (${(VALIDATION_RESULTS.crossDatasetAccuracy * 100).toFixed(1)}%)`,
               'Per-subject leave-one-out for individual variation',
-              'Total test samples: 6,400 labeled frames',
+              `Total test samples: ${VALIDATION_RESULTS.totalTestSamples.toLocaleString()} labeled frames`,
               'Evaluation on glasses/no-glasses/night conditions',
             ].map((item, i) => (
               <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -360,7 +360,7 @@ function BenchmarksTab() {
           <Activity size={20} style={{ color: '#FFE600', marginBottom: '12px' }} />
           <h4 style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 700, margin: '0 0 8px' }}>Adaptive Calibration</h4>
           <p style={{ color: '#9CA3AF', fontSize: '0.7rem', margin: 0 }}>
-            Per-driver baseline eliminates ethnic/physiological bias. Cross-dataset accuracy: 84.7%.
+            Per-driver baseline eliminates ethnic/physiological bias. Cross-dataset accuracy: {(VALIDATION_RESULTS.crossDatasetAccuracy * 100).toFixed(1)}%.
           </p>
         </div>
       </div>

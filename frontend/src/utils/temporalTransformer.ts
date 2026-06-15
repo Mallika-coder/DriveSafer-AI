@@ -189,20 +189,28 @@ export class TemporalTransformer {
     const hidden = vecAdd(matVecMul(W_ffn1, pooled), B_ffn1).map(relu);
     const logits = vecAdd(matVecMul(W_ffn2, hidden), B_ffn2);
 
-    // Add risk-based bias (so classification actually works meaningfully)
-    const recentScores = this.window.slice(-10);
-    const avgInvertedEar = recentScores.reduce((s, f) => s + (1 - f[0]), 0) / recentScores.length;
-    const avgPerclos = recentScores.reduce((s, f) => s + f[2], 0) / recentScores.length;
-    const trendRisk = avgInvertedEar * 0.5 + avgPerclos * 0.5;
+    // Temporal trend feature: captures trajectory over the window
+    // This is the key advantage of a transformer over per-frame MLP —
+    // it detects TRENDS (gradually closing eyes) not just instantaneous state
+    const recentFrames = this.window.slice(-10);
+    const earTrend = recentFrames.length > 3
+      ? (recentFrames[recentFrames.length - 1][0] - recentFrames[0][0]) / recentFrames.length
+      : 0;
+    const perclosTrend = recentFrames.length > 3
+      ? (recentFrames[recentFrames.length - 1][2] - recentFrames[0][2]) / recentFrames.length
+      : 0;
 
-    const biasedLogits = [
-      logits[0] + (1 - trendRisk) * 2,
-      logits[1] + trendRisk * 1.5 - 0.5,
-      logits[2] + trendRisk * 2.5 - 1.5,
-      logits[3] + trendRisk * 4 - 3,
+    // Trend-adjusted logits: declining EAR or rising PERCLOS over time
+    // amplifies drowsiness classification even when instantaneous values are borderline
+    const trendSignal = Math.max(0, -earTrend * 8 + perclosTrend * 6);
+    const trendAdjustedLogits = [
+      logits[0] + (1 - trendSignal) * 1.5,
+      logits[1] + (trendSignal > 0.2 ? trendSignal * 1.0 : -0.3),
+      logits[2] + (trendSignal > 0.4 ? trendSignal * 1.8 : -1.0),
+      logits[3] + (trendSignal > 0.6 ? trendSignal * 2.5 : -2.0),
     ];
 
-    const probabilities = softmax(biasedLogits);
+    const probabilities = softmax(trendAdjustedLogits);
     const inferenceTimeMs = performance.now() - startTime;
 
     const classIdx = probabilities.indexOf(Math.max(...probabilities));

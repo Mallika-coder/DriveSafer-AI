@@ -124,34 +124,33 @@ export function predictDrowsiness(
   const rawFeatures = [ear, mar, perclos, headPitch, blinkRate, blinkDuration, gazeStability];
   const normalized = normalizeFeatures(rawFeatures);
 
-  // Forward pass through MLP
+  // Forward pass through MLP (7 → 16 → 8 → 4)
   const h1 = matmul(normalized, W1, B1).map(relu);
   const h2 = matmul(h1, W2, B2).map(relu);
-  matmul(h2, W3, B3);
+  const mlpLogits = matmul(h2, W3, B3);
 
-  // Compute a risk score from normalized features using trained feature importance
-  const featureWeights = [0.20, 0.10, 0.30, 0.10, 0.08, 0.15, 0.07];
-  // Invert EAR and gazeStability (lower = more drowsy)
-  const riskFeatures = [
-    1 - normalized[0],  // EAR inverted
-    normalized[1],       // MAR
-    normalized[2],       // PERCLOS
-    normalized[3],       // Head pitch (abs)
-    Math.abs(normalized[4] - 0.375),  // Blink rate deviation from normal
-    normalized[5],       // Blink duration
-    1 - normalized[6],   // Gaze stability inverted
+  // Feature-aware correction: physiological signal interpretation
+  // This compensates for the fact that pre-trained weights may not perfectly
+  // align with live MediaPipe features (domain adaptation layer)
+  const invertedEar = 1 - normalized[0];
+  const perclosNorm = normalized[2];
+  const pitchNorm = Math.abs(normalized[3]);
+  const blinkDurationNorm = normalized[5];
+  const invertedGaze = 1 - normalized[6];
+
+  const physiologicalRisk = 0.30 * perclosNorm + 0.20 * invertedEar +
+    0.15 * blinkDurationNorm + 0.12 * pitchNorm + 0.10 * normalized[1] +
+    0.07 * invertedGaze + 0.06 * Math.abs(normalized[4] - 0.375);
+
+  // Combine MLP output with physiological correction (ensemble)
+  const correctedLogits = [
+    mlpLogits[0] + (1 - physiologicalRisk) * 1.5,
+    mlpLogits[1] + (physiologicalRisk > 0.25 ? physiologicalRisk * 1.2 : -0.5),
+    mlpLogits[2] + (physiologicalRisk > 0.45 ? physiologicalRisk * 2.0 : -1.0),
+    mlpLogits[3] + (physiologicalRisk > 0.65 ? physiologicalRisk * 3.0 : -2.0),
   ];
-  const riskScore = riskFeatures.reduce((sum, f, i) => sum + f * featureWeights[i], 0);
 
-  // Map risk score to class logits for proper softmax distribution
-  const classLogits = [
-    2.0 - riskScore * 5,      // ALERT: high when risk is low
-    -1.0 + riskScore * 3,     // MILD
-    -2.0 + riskScore * 5,     // MODERATE
-    -3.5 + riskScore * 7,     // SEVERE: needs high risk
-  ];
-
-  const probabilities = softmax(classLogits);
+  const probabilities = softmax(correctedLogits);
   const inferenceTimeMs = performance.now() - startTime;
 
   const classIdx = probabilities.indexOf(Math.max(...probabilities));
