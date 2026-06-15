@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, MapPin, BarChart3, MessageSquare, Settings, Activity, Clock, Users, Search, Bell, X, LogOut, User } from 'lucide-react';
+import { LayoutDashboard, MapPin, BarChart3, MessageSquare, Settings, Activity, Clock, Users, Search, Bell, X, LogOut, User, Car, Target } from 'lucide-react';
 import { fleetManager } from '../utils/fleetManager';
 
 interface LayoutProps {
@@ -10,6 +10,8 @@ interface LayoutProps {
 const NAV_ITEMS = [
   { path: '/', icon: LayoutDashboard, label: 'Command Center' },
   { path: '/monitor', icon: Activity, label: 'Live Monitor' },
+  { path: '/autocare', icon: Car, label: 'Autocare AI' },
+  { path: '/validation', icon: Target, label: 'Validation' },
   { path: '/fleet', icon: MapPin, label: 'Fleet Map' },
   { path: '/analytics', icon: BarChart3, label: 'Analytics' },
   { path: '/chat', icon: MessageSquare, label: 'AI Chat' },
