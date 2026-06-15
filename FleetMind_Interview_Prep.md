@@ -308,6 +308,29 @@ None of these are in a tutorial project."
 ### Q: "Compare your approach with World Models"
 **A:** "World Models (V-JEPA by Yann LeCun) learn an internal representation of the physical world and predict future states in latent space. Our temporal transformer does something analogous for DRIVER state — it takes 30 frames of physiological signals and predicts drowsiness class using self-attention, which reveals WHICH past frames mattered most (temporal explainability). The key difference: V-JEPA operates on road cameras for navigation; we operate on driver-facing cameras for fitness-to-drive assessment. In the hybrid autonomous future, both systems work together — ours triggers the handoff to autopilot."
 
+### Q: "Walk me through how you trained the model — step by step"
+**A:** "I built a 3-step training pipeline:
+
+**Step 1 — Dataset Generation:** I wrote a Python script (`training/generate_dataset.py`) that generates 28,737 labeled samples from 36 simulated subjects. Each subject has individual physiological baselines — some have naturally narrow eyes with EAR ~0.20, some have wide eyes at ~0.34, some wear glasses. The feature distributions come from published research — Dinges 1998 for PERCLOS, Soukupova 2016 for EAR ranges, Schleicher 2008 for blink durations. I simulate 4 drowsiness conditions per subject (alert, mild, moderate, severe), each with realistic noise.
+
+**Step 2 — Training:** I trained a 3-layer MLP (7→16→8→4) using scikit-learn's `MLPClassifier` with 5-fold stratified cross-validation (`training/train_model.py`). The model takes 7 normalized features (EAR, MAR, PERCLOS, head pitch, blink rate, blink duration, gaze stability) and outputs 4 classes. It achieved 97.8% accuracy consistently across all 5 folds (97.48% to 98.10%). The confusion matrix shows most errors are between adjacent classes (MILD↔MODERATE), which makes physiological sense.
+
+**Step 3 — Deployment:** I wrote an export script (`training/export_to_typescript.py`) that extracts the trained weight matrices (W1: 7×16, W2: 16×8, W3: 8×4) and biases from sklearn and injects them directly into the TypeScript frontend code. So the exact same weights that achieved 97.8% in Python are running in your browser when you open /monitor. The confusion matrix from training is also injected into the validation page — all metrics are computed from it dynamically."
+
+### Q: "How can you test this without actually driving?"
+**A:** "The system monitors the DRIVER, not the road — so you can test everything sitting at your desk with just a webcam:
+
+1. **Alert state:** Sit normally, eyes open → Score stays 5-15, Level: ALERT (green)
+2. **Drowsiness:** Slowly close eyes halfway → EAR drops, PERCLOS rises, Score jumps to 40-60
+3. **Severe drowsiness:** Close eyes fully for 3-4 seconds → Score > 70, SEVERE alarm fires
+4. **Yawning:** Open mouth wide and hold 3 seconds → MAR > 0.6, yawn alert triggers
+5. **Talking (false positive test):** Read something aloud → MAR fluctuates but NO yawn alert (frequency >2.5Hz = talking)
+6. **Phone distraction:** Hold phone near face → 'PHONE DETECTED' alert
+7. **Head nod:** Tilt head down → Head pitch increases, contributes to score
+8. **Autocare escalation:** Open /autocare → run 'Gradual Fatigue' simulation → watch levels escalate 0→1→2→3→4
+
+The webcam IS the sensor — same as it would be in a real car. A driver-facing camera mounted on the dashboard captures the same view. The only difference between desk testing and real deployment is the driving context (speed, lane data) which feeds into the Autocare Protocol's intervention decisions."
+
 ---
 
 ## 9. How to Demo (Golden Path)
