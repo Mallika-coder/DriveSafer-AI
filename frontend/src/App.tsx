@@ -8,6 +8,8 @@ import AIChat from './pages/AIChat';
 import Drivers from './pages/Drivers';
 import History from './pages/History';
 import DriverProfile from './pages/DriverProfile';
+import AutocareProtocol from './pages/AutocareProtocol';
+import ModelValidation from './pages/ModelValidation';
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
           <Route path="/drivers" element={<Drivers />} />
           <Route path="/history" element={<History />} />
           <Route path="/settings" element={<DriverProfile />} />
+          <Route path="/autocare" element={<AutocareProtocol />} />
+          <Route path="/validation" element={<ModelValidation />} />
         </Routes>
       </Layout>
     </Router>

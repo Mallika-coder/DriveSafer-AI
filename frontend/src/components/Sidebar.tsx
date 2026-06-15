@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Shield, Activity, Clock, BarChart3, User, Radio, UserCircle, Cpu } from 'lucide-react';
+import { Shield, Activity, Clock, BarChart3, User, Radio, UserCircle, Cpu, Car, Target } from 'lucide-react';
 
 export default function Sidebar() {
   const location = useLocation();
@@ -7,6 +7,8 @@ export default function Sidebar() {
   const navItems = [
     { path: '/', label: 'Overview', icon: Shield },
     { path: '/monitor', label: 'Monitor', icon: Activity },
+    { path: '/autocare', label: 'Autocare AI', icon: Car },
+    { path: '/validation', label: 'Validation', icon: Target },
     { path: '/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/fleet', label: 'Fleet V2X', icon: Radio },
     { path: '/profile', label: 'Driver Profile', icon: UserCircle },
