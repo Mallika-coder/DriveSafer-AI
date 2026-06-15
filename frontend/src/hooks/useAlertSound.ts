@@ -133,15 +133,15 @@ export function useAlertSound() {
         stopContinuousAlarm();
         break;
       case 1:
-        // Gentle single ping — barely noticeable
+        // Gentle alert — audible but not alarming
         stopContinuousAlarm();
-        playTone(440, 'sine', 0.3, 0.25);
+        playTone(480, 'sine', 0.5, 0.4);
         break;
       case 2:
-        // Moderate — two short tones with pause
+        // Moderate — clear warning tone
         stopContinuousAlarm();
-        playTone(520, 'sine', 0.5, 0.4);
-        if ("vibrate" in navigator) navigator.vibrate(150);
+        playTone(580, 'sine', 0.7, 0.55);
+        if ("vibrate" in navigator) navigator.vibrate(200);
         break;
       case 3:
         // Critical — continuous but CLEAN (not chaotic)

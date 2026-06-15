@@ -40,7 +40,7 @@ export function estimateHeadPose(landmarks: Point3D[]): HeadPose {
   // Roll: head tilt — angle between eyes
   const roll = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x) * (180 / Math.PI);
 
-  const isDistracted = Math.abs(yaw) > 25 || Math.abs(pitch) > 20 || Math.abs(roll) > 20;
+  const isDistracted = Math.abs(yaw) > 20 || Math.abs(pitch) > 15 || Math.abs(roll) > 18;
 
   return { pitch, yaw, roll, isDistracted };
 }

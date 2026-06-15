@@ -247,9 +247,9 @@ export default function Monitor() {
       msg = "Cognitive distraction detected — attention divided.";
     }
 
-    if (headPose.isDistracted && currentLevel < 1) {
-      currentLevel = 1;
-      msg = "Attention: Eyes off road detected.";
+    if (headPose.isDistracted && currentLevel < 2) {
+      currentLevel = 2;
+      msg = "Attention: Eyes off road — head position unsafe.";
     }
 
     if (currentLevel > 0) {
@@ -292,7 +292,7 @@ export default function Monitor() {
         setAlertLevel(0);
         stopAlarm();
         cooldownActive.current = false;
-      }, 10000);
+      }, 5000);
     }
   }, [headPose.pitch, headPose.yaw, headPose.isDistracted, marThresh, sessionId, triggerAlert, stopAlarm]);
 

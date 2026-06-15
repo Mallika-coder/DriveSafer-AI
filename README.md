@@ -123,7 +123,7 @@ ACTUAL
 ### Benchmark Comparison
 | Method | Year | Accuracy | F1 | Edge-Deployable? |
 |--------|------|----------|-----|-----------------|
-| **DriveSafer AI (Ours)** | **2025** | **97.8%** | **97.8%** | **Yes (browser, <0.1ms)** |
+| **DriveSafer AI (Ours)** | **2026** | **97.8%** | **97.8%** | **Yes (browser, <0.1ms)** |
 | PERCLOS-only baseline | 2020 | 78.2% | 74.3% | Yes |
 | EAR-only (Soukupova) | 2016 | 81.2% | 78.9% | Yes |
 | CNN + LSTM (Jabbar) | 2021 | 94.3% | 93.1% | No (GPU required, 100ms+) |

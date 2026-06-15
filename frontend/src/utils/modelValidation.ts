@@ -185,7 +185,7 @@ export const VALIDATION_RESULTS: ValidationResult = computeValidationFromCM(RAW_
 export const BENCHMARK_COMPARISONS: BenchmarkComparison[] = [
   {
     method: 'DriveSafer AI (Ours)',
-    year: 2025,
+    year: 2026,
     dataset: 'NTHU-DDD',
     accuracy: VALIDATION_RESULTS.overall.accuracy,
     f1Score: VALIDATION_RESULTS.overall.weightedF1,
