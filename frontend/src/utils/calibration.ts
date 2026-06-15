@@ -53,8 +53,8 @@ export class AdaptiveCalibrator {
     const earStdDev = stdDev(this.earSamples);
     const marStdDev = stdDev(this.marSamples);
 
-    // Threshold = baseline - 1.5 standard deviations (personalized)
-    const earThreshold = baselineEAR - 1.5 * earStdDev;
+    // Threshold = baseline - 2 standard deviations (personalized)
+    const earThreshold = baselineEAR - 2.0 * earStdDev;
     const marThreshold = baselineMAR + 2.0 * marStdDev;
 
     const data: CalibrationData = {
