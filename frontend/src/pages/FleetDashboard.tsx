@@ -58,7 +58,7 @@ export default function FleetDashboard() {
           <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Radio size={18} style={{ color: '#22c55e' }} /> Fleet Intelligence Map
           </h1>
-          <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0' }}>Live vehicle tracking with predictive analytics and anomaly detection</p>
+          <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', margin: '4px 0 0' }}>Live vehicle tracking with predictive analytics and anomaly detection</p>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           {[
@@ -77,7 +77,7 @@ export default function FleetDashboard() {
       {/* Map + Side Panel */}
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '14px', flex: 1, minHeight: 0 }}>
         {/* Map */}
-        <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
+        <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', overflow: 'hidden', position: 'relative' }}>
           <DrivingScene speed={60} alertLevel={summary.critical > 0 ? 2 : 0} timeOfDay="night" />
           {/* Vehicle markers */}
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -86,7 +86,7 @@ export default function FleetDashboard() {
               const left = 10 + (i * 27) % 75;
               return (
                 <div key={v.id} style={{ position: 'absolute', top: `${top}%`, left: `${left}%`, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                  <div style={{ width: v.isLive ? '14px' : '10px', height: v.isLive ? '14px' : '10px', borderRadius: '50%', background: statusColor(v.status), boxShadow: `0 0 ${v.isLive ? '12' : '6'}px ${statusColor(v.status)}`, border: v.isLive ? '2px solid #fff' : 'none' }} />
+                  <div style={{ width: v.isLive ? '14px' : '10px', height: v.isLive ? '14px' : '10px', borderRadius: '50%', background: statusColor(v.status), boxShadow: `0 0 ${v.isLive ? '12' : '6'}px ${statusColor(v.status)}`, border: v.isLive ? '1px solid #fff' : 'none' }} />
                   <span style={{ fontSize: '8px', color: '#fff', marginTop: '2px', background: 'rgba(0,0,0,0.6)', padding: '1px 4px', borderRadius: '3px' }}>{v.id}</span>
                 </div>
               );
@@ -100,8 +100,8 @@ export default function FleetDashboard() {
         {/* Side Panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', overflow: 'auto' }}>
           {/* Predictive Fatigue */}
-          <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px' }}>
-            <h4 style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
+            <h4 style={{ fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <TrendingUp size={12} style={{ color: '#8b5cf6' }} /> Fatigue Prediction
             </h4>
             {prediction.minutesToFatigue !== null ? (
@@ -109,7 +109,7 @@ export default function FleetDashboard() {
                 <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'monospace', color: prediction.minutesToFatigue < 15 ? '#ef4444' : '#f59e0b' }}>
                   {prediction.minutesToFatigue} min
                 </div>
-                <div style={{ fontSize: '10px', color: '#64748b', marginTop: '4px' }}>until fatigue threshold</div>
+                <div style={{ fontSize: '10px', color: 'var(--text-tertiary)', marginTop: '4px' }}>until fatigue threshold</div>
               </div>
             ) : (
               <div style={{ fontSize: '13px', color: '#22c55e', fontWeight: 500 }}>No fatigue predicted</div>
@@ -122,16 +122,16 @@ export default function FleetDashboard() {
           </div>
 
           {/* Anomaly Status */}
-          <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px' }}>
-            <h4 style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px' }}>
+            <h4 style={{ fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', margin: '0 0 8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <Shield size={12} style={{ color: '#3b82f6' }} /> Anomaly Detection
             </h4>
             <p style={{ color: anomalyStatus.includes('Normal') ? '#22c55e' : '#f59e0b', fontSize: '12px', margin: 0 }}>{anomalyStatus}</p>
           </div>
 
           {/* Alert Feed */}
-          <div style={{ background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', padding: '14px', flex: 1, overflow: 'auto' }}>
-            <h4 style={{ fontSize: '11px', color: '#64748b', textTransform: 'uppercase', margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', padding: '14px', flex: 1, overflow: 'auto' }}>
+            <h4 style={{ fontSize: '11px', color: 'var(--text-tertiary)', textTransform: 'uppercase', margin: '0 0 10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <AlertTriangle size={12} style={{ color: '#ef4444' }} /> Recent Alerts
             </h4>
             {alerts.length === 0 ? (
@@ -139,7 +139,7 @@ export default function FleetDashboard() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 {alerts.slice(0, 8).map(a => (
-                  <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid #1e293b' }}>
+                  <div key={a.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
                     <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: a.severity >= 3 ? '#ef4444' : '#f59e0b', flexShrink: 0 }} />
                     <div style={{ flex: 1 }}>
                       <span style={{ color: '#cbd5e1', fontSize: '11px' }}>{a.vehicleId}</span>

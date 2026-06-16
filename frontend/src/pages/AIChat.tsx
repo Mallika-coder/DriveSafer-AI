@@ -134,14 +134,14 @@ export default function AIChat() {
           <h1 style={{ fontSize: '20px', fontWeight: 600, color: '#fff', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Sparkles size={18} style={{ color: '#3b82f6' }} /> AI Fleet Manager
           </h1>
-          <p style={{ fontSize: '12px', color: '#64748b', margin: '4px 0 0' }}>LLM-powered • Answers based on real-time fleet data</p>
+          <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', margin: '4px 0 0' }}>LLM-powered • Answers based on real-time fleet data</p>
         </div>
         <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap', maxWidth: '400px' }}>
           {QUICK_PROMPTS.map(prompt => (
             <button
               key={prompt}
               onClick={() => handleSend(prompt)}
-              style={{ padding: '5px 10px', borderRadius: '6px', background: '#1e293b', border: '1px solid #2d3748', color: '#94a3b8', fontSize: '10px', cursor: 'pointer', fontWeight: 500 }}
+              style={{ padding: '5px 10px', borderRadius: '6px', background: 'var(--border)', border: '1px solid #2d3748', color: '#94a3b8', fontSize: '10px', cursor: 'pointer', fontWeight: 500 }}
             >
               {prompt}
             </button>
@@ -149,7 +149,7 @@ export default function AIChat() {
         </div>
       </div>
 
-      <div style={{ flex: 1, background: '#161922', border: '1px solid #1e293b', borderRadius: '10px', display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
+      <div style={{ flex: 1, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '10px', display: 'flex', flexDirection: 'column', overflow: 'hidden', minHeight: 0 }}>
         <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '14px' }}>
           {messages.map(msg => (
             <div key={msg.id} style={{ maxWidth: '80%', alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start' }}>
@@ -166,8 +166,8 @@ export default function AIChat() {
                   borderRadius: '12px',
                   borderBottomRightRadius: msg.role === 'user' ? '4px' : '12px',
                   borderBottomLeftRadius: msg.role === 'ai' ? '4px' : '12px',
-                  background: msg.role === 'user' ? '#1e3a5f' : '#1e293b',
-                  color: msg.role === 'user' ? '#93c5fd' : '#e2e8f0',
+                  background: msg.role === 'user' ? '#1e3a5f' : 'var(--border)',
+                  color: msg.role === 'user' ? '#93c5fd' : 'var(--text-primary)',
                   fontSize: '13px',
                   lineHeight: 1.7,
                   whiteSpace: 'pre-wrap',
@@ -185,11 +185,11 @@ export default function AIChat() {
               <div style={{ width: '28px', height: '28px', borderRadius: '50%', background: 'rgba(139,92,246,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <Bot size={13} style={{ color: '#a78bfa' }} />
               </div>
-              <div style={{ padding: '12px 16px', borderRadius: '12px', background: '#1e293b' }}>
+              <div style={{ padding: '12px 16px', borderRadius: '12px', background: 'var(--border)' }}>
                 <div style={{ display: 'flex', gap: '4px' }}>
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64748b', animation: 'pulse 1s infinite' }} />
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64748b', animation: 'pulse 1s infinite 0.2s' }} />
-                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#64748b', animation: 'pulse 1s infinite 0.4s' }} />
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-tertiary)', animation: 'pulse 1s infinite' }} />
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-tertiary)', animation: 'pulse 1s infinite 0.2s' }} />
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--text-tertiary)', animation: 'pulse 1s infinite 0.4s' }} />
                 </div>
               </div>
             </div>
@@ -197,14 +197,14 @@ export default function AIChat() {
           <div ref={messagesEndRef} />
         </div>
 
-        <div style={{ padding: '14px 16px', borderTop: '1px solid #1e293b', display: 'flex', gap: '10px' }}>
+        <div style={{ padding: '14px 16px', borderTop: '1px solid var(--border)', display: 'flex', gap: '10px' }}>
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && !e.shiftKey && handleSend()}
             placeholder="Ask anything about your fleet..."
             disabled={isLoading}
-            style={{ flex: 1, background: '#0f1117', border: '1px solid #2d3748', borderRadius: '8px', padding: '10px 14px', color: '#e2e8f0', fontSize: '13px', outline: 'none', opacity: isLoading ? 0.6 : 1 }}
+            style={{ flex: 1, background: 'var(--bg-primary)', border: '1px solid #2d3748', borderRadius: '8px', padding: '10px 14px', color: 'var(--text-primary)', fontSize: '13px', outline: 'none', opacity: isLoading ? 0.6 : 1 }}
           />
           <button
             onClick={() => handleSend()}
