@@ -99,6 +99,14 @@ export default function AutocareProtocolPage() {
   const levelColor = LEVEL_COLORS[autocareState.level];
   const LevelIcon = LEVEL_ICONS[autocareState.level];
 
+  // Vehicle telemetry — reacts to autocare level
+  const vehicleSpeed = autocareState.level === 0 ? 80 : autocareState.level === 1 ? 75 : autocareState.level === 2 ? 65 : autocareState.level === 3 ? 40 : 0;
+  const laneKeeping = autocareState.level >= 2;
+  const hazardLights = autocareState.level >= 3;
+  const steeringAngle = autocareState.level === 4 ? 15 : autocareState.level === 3 ? 5 : 0;
+  const windowsOpen = autocareState.level >= 3;
+  const ecallActive = autocareState.level >= 4;
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '16px' }}>
       {/* Header */}
@@ -113,6 +121,42 @@ export default function AutocareProtocolPage() {
           <LevelIcon size={20} style={{ color: levelColor, margin: '0 auto 4px' }} />
           <div style={{ color: levelColor, fontSize: '20px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>LEVEL {autocareState.level}</div>
           <div style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: 500 }}>{autocareState.levelName}</div>
+        </div>
+      </div>
+
+      {/* Vehicle Telemetry — real-time reaction to autocare level */}
+      <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <Car size={14} style={{ color: 'var(--accent)' }} />
+          <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Vehicle Telemetry (Live Response)</span>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '12px' }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>Speed</div>
+            <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: vehicleSpeed === 0 ? 'var(--danger)' : vehicleSpeed < 60 ? 'var(--warning)' : 'var(--text-primary)' }}>{vehicleSpeed}</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>km/h</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>Steering</div>
+            <div style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: steeringAngle > 0 ? 'var(--warning)' : 'var(--text-primary)' }}>{steeringAngle}°</div>
+            <div style={{ fontSize: '10px', color: 'var(--text-tertiary)' }}>{steeringAngle > 0 ? 'pulling over' : 'straight'}</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>Lane Assist</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', background: laneKeeping ? 'rgba(34,197,94,0.1)' : 'var(--bg-tertiary)', color: laneKeeping ? 'var(--success)' : 'var(--text-tertiary)' }}>{laneKeeping ? 'ACTIVE' : 'OFF'}</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>Hazards</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', background: hazardLights ? 'rgba(239,68,68,0.1)' : 'var(--bg-tertiary)', color: hazardLights ? 'var(--danger)' : 'var(--text-tertiary)' }}>{hazardLights ? 'FLASHING' : 'OFF'}</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>Windows</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', background: windowsOpen ? 'rgba(59,130,246,0.1)' : 'var(--bg-tertiary)', color: windowsOpen ? 'var(--accent)' : 'var(--text-tertiary)' }}>{windowsOpen ? 'OPEN' : 'CLOSED'}</div>
+          </div>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginBottom: '4px' }}>eCall</div>
+            <div style={{ fontSize: '13px', fontWeight: 600, padding: '4px 8px', borderRadius: '4px', background: ecallActive ? 'rgba(239,68,68,0.15)' : 'var(--bg-tertiary)', color: ecallActive ? 'var(--danger)' : 'var(--text-tertiary)' }}>{ecallActive ? 'DIALING 112' : 'STANDBY'}</div>
+          </div>
         </div>
       </div>
 
