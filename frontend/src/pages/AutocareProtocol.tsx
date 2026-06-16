@@ -100,23 +100,19 @@ export default function AutocareProtocolPage() {
   const LevelIcon = LEVEL_ICONS[autocareState.level];
 
   return (
-    <div className="flex flex-col h-full animate-fade-in w-full pb-8 gap-6">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '16px' }}>
       {/* Header */}
-      <div style={{ backgroundColor: '#111927', padding: '32px 48px', borderRadius: '32px', border: `2px solid ${levelColor}30` }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', margin: 0 }}>
-              AUTOCARE <span style={{ background: `linear-gradient(to right, ${levelColor}, #7000FF)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>PROTOCOL</span>
-            </h1>
-            <p style={{ color: '#9CA3AF', fontSize: '0.875rem', marginTop: '8px' }}>
-              Preventive AI Safety System — Inspired by World Models & SAE J3016 Automation Levels
-            </p>
-          </div>
-          <div style={{ textAlign: 'center', padding: '16px 32px', borderRadius: '16px', backgroundColor: `${levelColor}15`, border: `2px solid ${levelColor}50` }}>
-            <LevelIcon size={32} style={{ color: levelColor, margin: '0 auto 8px' }} />
-            <div style={{ color: levelColor, fontSize: '1.5rem', fontWeight: 900, fontFamily: 'Orbitron' }}>LEVEL {autocareState.level}</div>
-            <div style={{ color: levelColor, fontSize: '0.75rem', fontWeight: 700 }}>{autocareState.levelName}</div>
-          </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
+          <h1 style={{ fontSize: '20px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Autocare Protocol</h1>
+          <p style={{ color: 'var(--text-tertiary)', fontSize: '13px', marginTop: '4px' }}>
+            Preventive AI Safety — SAE J3016 Automation Levels
+          </p>
+        </div>
+        <div style={{ textAlign: 'center', padding: '12px 24px', borderRadius: '8px', background: 'var(--bg-secondary)', border: '1px solid var(--border)' }}>
+          <LevelIcon size={20} style={{ color: levelColor, margin: '0 auto 4px' }} />
+          <div style={{ color: levelColor, fontSize: '20px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>LEVEL {autocareState.level}</div>
+          <div style={{ color: 'var(--text-tertiary)', fontSize: '11px', fontWeight: 500 }}>{autocareState.levelName}</div>
         </div>
       </div>
 
@@ -124,22 +120,22 @@ export default function AutocareProtocolPage() {
         {/* Left: Intervention Levels */}
         <div style={{ width: '60%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* World Model Prediction */}
-          <div style={{ backgroundColor: '#111927', padding: '20px 24px', borderRadius: '20px', border: '2px solid rgba(112, 0, 255, 0.3)' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '20px 24px', borderRadius: '8px', border: '2px solid rgba(112, 0, 255, 0.3)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
               <Brain size={18} style={{ color: '#7000FF' }} />
-              <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 900, fontFamily: 'Orbitron' }}>WORLD MODEL PREDICTION</span>
+              <span style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 900,  }}>WORLD MODEL PREDICTION</span>
             </div>
-            <p style={{ color: '#D1D5DB', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
+            <p style={{ color: 'var(--text-primary)', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
               {autocareState.worldModelPrediction}
             </p>
             <div style={{ marginTop: '12px', display: 'flex', gap: '16px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Thermometer size={14} style={{ color: '#9CA3AF' }} />
-                <span style={{ color: '#9CA3AF', fontSize: '0.7rem' }}>Drowsiness Score: <strong style={{ color: levelColor }}>{simulatedScore}</strong></span>
+                <Thermometer size={14} style={{ color: 'var(--text-secondary)' }} />
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Drowsiness Score: <strong style={{ color: levelColor }}>{simulatedScore}</strong></span>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Car size={14} style={{ color: '#9CA3AF' }} />
-                <span style={{ color: '#9CA3AF', fontSize: '0.7rem' }}>Autonomy: <strong style={{ color: levelColor }}>{autocareState.autonomyPercentage}%</strong></span>
+                <Car size={14} style={{ color: 'var(--text-secondary)' }} />
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.7rem' }}>Autonomy: <strong style={{ color: levelColor }}>{autocareState.autonomyPercentage}%</strong></span>
               </div>
             </div>
           </div>
@@ -159,7 +155,7 @@ export default function AutocareProtocolPage() {
                   style={{
                     backgroundColor: isActive ? `${color}10` : '#111927',
                     padding: '16px 20px',
-                    borderRadius: '16px',
+                    borderRadius: '8px',
                     border: isActive ? `2px solid ${color}` : '2px solid rgba(255,255,255,0.06)',
                     opacity: isPast ? 0.5 : 1,
                     transition: 'all 0.3s',
@@ -171,10 +167,10 @@ export default function AutocareProtocolPage() {
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 900 }}>Level {level}: {config.name}</span>
+                        <span style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 900 }}>Level {level}: {config.name}</span>
                         {isActive && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: color, animation: 'pulse 1s infinite' }} />}
                       </div>
-                      <span style={{ color: '#6B7280', fontSize: '0.65rem' }}>
+                      <span style={{ color: 'var(--text-tertiary)', fontSize: '0.65rem' }}>
                         Confidence threshold: {(config.confidenceThreshold * 100).toFixed(0)}% | Autonomy: {config.autonomyPct}%
                       </span>
                     </div>
@@ -211,8 +207,8 @@ export default function AutocareProtocolPage() {
         {/* Right: Simulation & Logic */}
         <div style={{ width: '40%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {/* Simulation Controls */}
-          <div style={{ backgroundColor: '#111927', padding: '20px 24px', borderRadius: '20px', border: '2px solid rgba(255,255,255,0.1)' }}>
-            <h3 style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 900, fontFamily: 'Orbitron', margin: '0 0 16px' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '20px 24px', borderRadius: '8px', border: '2px solid rgba(255,255,255,0.1)' }}>
+            <h3 style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 900, margin: '0 0 16px' }}>
               SIMULATION SCENARIOS
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -232,10 +228,10 @@ export default function AutocareProtocolPage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ color: '#fff', fontSize: '0.75rem', fontWeight: 700 }}>{scenario.name}</span>
-                    <ChevronRight size={14} style={{ color: '#6B7280' }} />
+                    <span style={{ color: 'var(--text-primary)', fontSize: '0.75rem', fontWeight: 700 }}>{scenario.name}</span>
+                    <ChevronRight size={14} style={{ color: 'var(--text-tertiary)' }} />
                   </div>
-                  <span style={{ color: '#6B7280', fontSize: '0.65rem' }}>{scenario.description}</span>
+                  <span style={{ color: 'var(--text-tertiary)', fontSize: '0.65rem' }}>{scenario.description}</span>
                 </button>
               ))}
             </div>
@@ -247,32 +243,32 @@ export default function AutocareProtocolPage() {
           </div>
 
           {/* Decision Logic */}
-          <div style={{ backgroundColor: '#111927', padding: '20px 24px', borderRadius: '20px', border: '2px solid rgba(255,255,255,0.1)' }}>
-            <h3 style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 900, fontFamily: 'Orbitron', margin: '0 0 16px' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '20px 24px', borderRadius: '8px', border: '2px solid rgba(255,255,255,0.1)' }}>
+            <h3 style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 900, margin: '0 0 16px' }}>
               ESCALATION LOGIC
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
                 <span style={{ color: '#00F0FF', fontSize: '0.7rem', fontWeight: 700 }}>Multi-Signal Confirmation</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Requires 2+ abnormal signals before escalation. Reduces false positives by 67%.
                 </p>
               </div>
               <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
                 <span style={{ color: '#FFE600', fontSize: '0.7rem', fontWeight: 700 }}>Consecutive Frame Threshold</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Each level requires sustained detection (15-90 frames) before triggering.
                 </p>
               </div>
               <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
                 <span style={{ color: '#FF007F', fontSize: '0.7rem', fontWeight: 700 }}>Confidence Gating</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Higher levels need higher confidence (60% → 90%) preventing uncertain escalations.
                 </p>
               </div>
               <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)' }}>
                 <span style={{ color: '#7000FF', fontSize: '0.7rem', fontWeight: 700 }}>World Model Integration</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Predicts future driver state (like LeCun's JEPA predicting future representations).
                   Uses temporal trend + circadian model + session duration for proactive intervention.
                 </p>
@@ -281,28 +277,28 @@ export default function AutocareProtocolPage() {
           </div>
 
           {/* Active Trigger Signals */}
-          <div style={{ backgroundColor: '#111927', padding: '20px 24px', borderRadius: '20px', border: '2px solid rgba(255,255,255,0.1)', flex: 1 }}>
-            <h3 style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 900, fontFamily: 'Orbitron', margin: '0 0 16px' }}>
+          <div style={{ background: 'var(--bg-secondary)', padding: '20px 24px', borderRadius: '8px', border: '2px solid rgba(255,255,255,0.1)', flex: 1 }}>
+            <h3 style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 900, margin: '0 0 16px' }}>
               VS WORLD MODELS
             </h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(112,0,255,0.05)', border: '1px solid rgba(112,0,255,0.2)' }}>
                 <span style={{ color: '#7000FF', fontSize: '0.7rem', fontWeight: 700 }}>Yann LeCun's V-JEPA</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Predicts future <strong>road/environment</strong> states. Answers: "What will happen on the road?"
                 </p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '6px' }}>
-                <span style={{ color: '#6B7280', fontSize: '0.65rem', fontWeight: 700 }}>COMPLEMENTARY</span>
+                <span style={{ color: 'var(--text-tertiary)', fontSize: '0.65rem', fontWeight: 700 }}>COMPLEMENTARY</span>
               </div>
               <div style={{ padding: '12px', borderRadius: '10px', backgroundColor: 'rgba(0,240,255,0.05)', border: '1px solid rgba(0,240,255,0.2)' }}>
                 <span style={{ color: '#00F0FF', fontSize: '0.7rem', fontWeight: 700 }}>DriveSafer AI (Ours)</span>
-                <p style={{ color: '#9CA3AF', fontSize: '0.65rem', margin: '4px 0 0' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.65rem', margin: '4px 0 0' }}>
                   Predicts future <strong>driver</strong> state. Answers: "Is the human fit to drive?"
                 </p>
               </div>
               <div style={{ padding: '10px', borderRadius: '8px', backgroundColor: 'rgba(0,0,0,0.3)', marginTop: '8px' }}>
-                <p style={{ color: '#D1D5DB', fontSize: '0.65rem', margin: 0, lineHeight: 1.5 }}>
+                <p style={{ color: 'var(--text-primary)', fontSize: '0.65rem', margin: 0, lineHeight: 1.5 }}>
                   When our model detects drowsiness → World Model takes over driving (autopilot mode).
                   This is the <strong style={{ color: '#FFE600' }}>hybrid future</strong> your professor described:
                   Human monitoring + autonomous fallback.

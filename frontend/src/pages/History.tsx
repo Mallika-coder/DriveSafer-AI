@@ -75,30 +75,30 @@ export default function History() {
   return (
     <div className="h-full flex flex-col animate-fade-in w-full pb-10 gap-6">
       {/* Header */}
-      <div style={{ backgroundColor: '#111927', padding: '32px 48px', borderRadius: '32px', border: '2px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ background: 'var(--bg-secondary)', padding: '32px 48px', borderRadius: '8px', border: '2px solid rgba(255, 255, 255, 0.1)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ffffff', fontFamily: 'Orbitron', margin: 0, textTransform: 'uppercase' }}>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#ffffff', margin: 0, textTransform: 'uppercase' }}>
             Session <span style={{ background: 'linear-gradient(to right, #00F0FF, #7000FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>History</span>
           </h1>
-          <p style={{ fontSize: '1rem', fontWeight: 700, color: '#9CA3AF', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
+          <p style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '4px' }}>
             <Database size={18} style={{ color: '#00F0FF' }} /> {sessions.length} sessions recorded
           </p>
         </div>
 
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#6B7280' }} />
+            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)' }} />
             <input
               type="text"
               placeholder="Search..."
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              style={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '12px 16px 12px 40px', fontSize: '0.875rem', color: '#fff', width: '200px', outline: 'none' }}
+              style={{ backgroundColor: '#000', border: '1px solid rgba(255,255,255,0.15)', borderRadius: '12px', padding: '12px 16px 12px 40px', fontSize: '0.875rem', color: 'var(--text-primary)', width: '200px', outline: 'none' }}
             />
           </div>
           <button
             onClick={exportData}
-            style={{ backgroundColor: '#FF007F', color: '#fff', border: 'none', borderRadius: '12px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+            style={{ backgroundColor: '#FF007F', color: 'var(--text-primary)', border: 'none', borderRadius: '12px', padding: '12px 20px', fontSize: '0.875rem', fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
             <Download size={16} /> Export CSV
           </button>
@@ -109,14 +109,14 @@ export default function History() {
       <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {loading ? (
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: '#6B7280', fontSize: '1rem' }}>Loading sessions...</span>
+            <span style={{ color: 'var(--text-tertiary)', fontSize: '1rem' }}>Loading sessions...</span>
           </div>
         ) : filteredSessions.length === 0 ? (
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px', backgroundColor: '#111927', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)', padding: '80px' }}>
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '24px', background: 'var(--bg-secondary)', borderRadius: '24px', border: '2px solid rgba(255,255,255,0.1)', padding: '80px' }}>
             <Clock size={64} style={{ color: '#00F0FF', opacity: 0.5 }} />
             <div style={{ textAlign: 'center' }}>
-              <p style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 900, margin: '0 0 8px' }}>No Sessions Yet</p>
-              <p style={{ color: '#6B7280', fontSize: '0.875rem', margin: 0 }}>Start monitoring to record driving sessions</p>
+              <p style={{ color: 'var(--text-primary)', fontSize: '1.5rem', fontWeight: 900, margin: '0 0 8px' }}>No Sessions Yet</p>
+              <p style={{ color: 'var(--text-tertiary)', fontSize: '0.875rem', margin: 0 }}>Start monitoring to record driving sessions</p>
             </div>
           </div>
         ) : (
@@ -124,7 +124,7 @@ export default function History() {
             <div
               key={session.id}
               style={{
-                backgroundColor: '#111927',
+                background: 'var(--bg-secondary)',
                 borderRadius: '16px',
                 border: '1px solid rgba(255,255,255,0.1)',
                 overflow: 'hidden',
@@ -144,11 +144,11 @@ export default function History() {
                 }}
               >
                 <span style={{ color: '#00F0FF', fontWeight: 900, fontFamily: 'monospace', fontSize: '0.875rem' }}>#{session.id}</span>
-                <span style={{ color: '#fff', fontSize: '0.875rem' }}>{formatDate(session.start_time)}</span>
-                <span style={{ color: '#9CA3AF', fontSize: '0.875rem', fontFamily: 'monospace' }}>{formatDuration(session.duration)}</span>
+                <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem' }}>{formatDate(session.start_time)}</span>
+                <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontFamily: 'monospace' }}>{formatDuration(session.duration)}</span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   <AlertTriangle size={14} style={{ color: (session.events?.length || 0) > 0 ? '#FFE600' : '#6B7280' }} />
-                  <span style={{ color: '#fff', fontSize: '0.875rem', fontWeight: 700 }}>{session.events?.length || 0}</span>
+                  <span style={{ color: 'var(--text-primary)', fontSize: '0.875rem', fontWeight: 700 }}>{session.events?.length || 0}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   {[1, 2, 3].map(sev => {
@@ -166,7 +166,7 @@ export default function History() {
                   onClick={e => { e.stopPropagation(); deleteSession(session.id); }}
                   style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
                 >
-                  <Trash2 size={16} style={{ color: '#6B7280' }} />
+                  <Trash2 size={16} style={{ color: 'var(--text-tertiary)' }} />
                 </button>
               </div>
 
@@ -176,11 +176,11 @@ export default function History() {
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
                     {session.events.map(event => (
                       <div key={event.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 16px', backgroundColor: 'rgba(0,0,0,0.3)', borderRadius: '8px', borderLeft: `3px solid ${event.severity === 3 ? '#FF2A2A' : event.severity === 2 ? '#FFE600' : '#00F0FF'}` }}>
-                        <span style={{ color: '#6B7280', fontSize: '0.7rem', fontFamily: 'monospace', width: '80px' }}>
+                        <span style={{ color: 'var(--text-tertiary)', fontSize: '0.7rem', fontFamily: 'monospace', width: '80px' }}>
                           {new Date(event.timestamp).toLocaleTimeString()}
                         </span>
-                        <span style={{ color: '#fff', fontSize: '0.8rem', fontWeight: 600 }}>{event.event_type}</span>
-                        <span style={{ marginLeft: 'auto', color: '#6B7280', fontSize: '0.7rem', fontFamily: 'monospace' }}>
+                        <span style={{ color: 'var(--text-primary)', fontSize: '0.8rem', fontWeight: 600 }}>{event.event_type}</span>
+                        <span style={{ marginLeft: 'auto', color: 'var(--text-tertiary)', fontSize: '0.7rem', fontFamily: 'monospace' }}>
                           {event.ear_value ? `EAR: ${event.ear_value.toFixed(3)}` : ''}
                         </span>
                       </div>
