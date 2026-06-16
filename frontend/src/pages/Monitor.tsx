@@ -17,7 +17,7 @@ import { predictDrowsiness } from '../utils/tinyMLModel';
 import { DriverProfiler } from '../utils/driverProfiling';
 import { fleetManager } from '../utils/fleetManager';
 import axios from 'axios';
-import { Settings, ShieldAlert, Crosshair, Timer, Headphones } from 'lucide-react';
+import { Settings, ShieldAlert, Crosshair, Timer } from 'lucide-react';
 
 interface ChartDataPoint {
   time: number;
