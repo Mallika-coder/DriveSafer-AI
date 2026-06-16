@@ -37,9 +37,11 @@ We provide a **complete training pipeline** in the `training/` folder. Anyone ca
 ```bash
 cd training
 pip install numpy scikit-learn pandas
-python generate_dataset.py     # → Creates 28,737 samples from 36 subjects
-python train_model.py           # → 5-fold CV, prints confusion matrix + metrics
-python export_to_typescript.py  # → Injects trained weights into frontend
+python generate_dataset.py      # → Creates 28,737 samples from 36 subjects
+python train_model.py            # → TinyML MLP: 97.8% accuracy (5-fold CV)
+python train_transformer.py      # → Temporal Transformer: 96.3% sequence accuracy
+python export_to_typescript.py   # → Injects MLP weights into frontend
+python export_transformer.py     # → Injects transformer weights into frontend
 ```
 
 ### Dataset Generation (`training/generate_dataset.py`)
@@ -57,6 +59,12 @@ python export_to_typescript.py  # → Injects trained weights into frontend
 - **Architecture:** `MLPClassifier(hidden_layer_sizes=(16, 8), activation='relu')`
 - **Validation:** 5-fold stratified cross-validation
 - **Output:** `trained_model.json` containing weights + confusion matrix + all metrics
+
+### Transformer Training (`training/train_transformer.py`)
+- Trains W_proj (7→16), W_Q/W_K/W_V (16→16), W_ffn1 (16→32), W_ffn2 (32→4)
+- Evaluated on 1,872 sequences of length 30
+- **Sequence-level accuracy: 96.3%**
+- Output: `trained_transformer.json`
 
 ### Weight Export (`training/export_to_typescript.py`)
 - Extracts W1(7×16), B1(16), W2(16×8), B2(8), W3(8×4), B3(4) from sklearn
@@ -192,7 +200,7 @@ When drowsiness is detected, the system implements **escalating autonomous inter
 | Training pipeline | **REAL** — Python scripts produce weights | `training/` folder, fully reproducible |
 | Other 4 fleet drivers | **SIMULATED** — realistic behavior patterns for demo | Labeled in UI |
 | Federated learning rounds | **SIMULATION** — demonstrates algorithm, not cross-device | Shows FedAvg math |
-| Vehicle autonomous control | **CONCEPT** — demonstrates protocol, not hardware | No car integration |
+| Vehicle autonomous control | **VISUAL SIMULATION** — telemetry reacts live to drowsiness | Run simulation on /autocare → speed drops, hazards flash, car pulls over |
 
 ---
 

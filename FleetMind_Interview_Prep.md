@@ -111,9 +111,11 @@ ACTUAL
 ```bash
 cd training
 pip install numpy scikit-learn pandas
-python generate_dataset.py    # → drowsiness_dataset.csv
-python train_model.py          # → trained_model.json (prints all metrics)
-python export_to_typescript.py # → updates frontend TypeScript files
+python generate_dataset.py      # → drowsiness_dataset.csv (28,737 samples)
+python train_model.py            # → trained_model.json (MLP: 97.8% accuracy)
+python train_transformer.py      # → trained_transformer.json (Transformer: 96.3%)
+python export_to_typescript.py   # → injects MLP weights into frontend
+python export_transformer.py     # → injects transformer weights into frontend
 ```
 
 ---
@@ -339,7 +341,7 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 2. **Click Live Monitor** → webcam starts → show EAR value, drowsiness gauge, XAI attribution
 3. **Close eyes slightly** → watch PERCLOS climb → XAI shows "PERCLOS contributing 45%"
 4. **Talk normally** → A/B panel shows basic model would alarm but fusion stays CLEAR
-5. **Open Autocare AI** → run "Gradual Fatigue" simulation → show levels escalating
+5. **Open Autocare AI** → run "Gradual Fatigue" → watch vehicle telemetry: speed drops 80→40→0, hazards flash, car pulls over
 6. **Open Model Validation** → show confusion matrix → trace accuracy computation
 7. **Open Analytics** → click "Run Round" → watch FL accuracy climb
 8. **Open AI Chat** → ask "who's at risk?" → get live fleet answer
@@ -354,7 +356,8 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 | ML modules | 17 + Autocare | Architecture |
 | Training samples | 28,737 | generate_dataset.py |
 | Subjects | 36 | Matches NTHU-DDD |
-| 5-fold CV Accuracy | 97.8% | train_model.py |
+| TinyML MLP Accuracy | 97.8% | train_model.py (5-fold CV) |
+| Transformer Accuracy | 96.3% | train_transformer.py (sequence-level) |
 | AUC-ROC | 99.9% | sklearn roc_auc_score |
 | Cohen's Kappa | 0.9708 | sklearn |
 | TinyML inference | <0.1ms | performance.now() |
@@ -389,7 +392,7 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 | Predictive fatigue | **REAL** — uses your score trend | Monitor for 2+ minutes |
 | Other 4 fleet drivers | **SIMULATED** | Labeled clearly — demo purposes |
 | Federated learning rounds | **SIMULATION** | Demonstrates algorithm, not cross-device |
-| Vehicle autonomous control | **CONCEPT** | No hardware — demonstrates protocol |
+| Vehicle autonomous control | **VISUAL SIMULATION** | Run scenario on /autocare → speed drops, hazards flash, car pulls over in real-time |
 
 ---
 
