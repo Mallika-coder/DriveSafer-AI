@@ -43,8 +43,8 @@ export function computeDrowsinessScore(input: DrowsinessInput): DrowsinessOutput
   // MAR: yawning indicator
   const marScore = input.mar > 0.6 ? Math.min((input.mar - 0.6) * 250, 100) : 0;
 
-  // Head pitch: nodding off (lowered threshold for sensitivity)
-  const headPitchScore = Math.abs(input.headPitch) > 7 ? Math.min(Math.abs(input.headPitch) * 5, 100) : 0;
+  // Head pitch: only counts as drowsiness if severely nodding (>20°), not normal movement
+  const headPitchScore = Math.abs(input.headPitch) > 20 ? Math.min((Math.abs(input.headPitch) - 20) * 4, 100) : 0;
 
   // Blink rate: both too high and too low are indicators
   const normalBlinkRate = 15;
