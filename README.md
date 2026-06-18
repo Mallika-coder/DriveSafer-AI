@@ -1,6 +1,6 @@
 # DriveSafer AI — Intelligent Driver Monitoring & Preventive Safety System
 
-An AI-powered driver safety platform that combines real-time computer vision (17 ML modules), temporal transformers, federated learning, and an **Autocare Protocol** for progressive autonomous intervention — all running in the browser at 30+ FPS with no GPU required.
+An AI-powered driver safety platform that combines real-time computer vision (20 ML modules), temporal transformers, federated learning, and an **Autocare Protocol** for progressive autonomous intervention — all running in the browser at 30+ FPS with no GPU required.
 
 **Live Demo:** https://drive-safer-ai.vercel.app
 **GitHub:** https://github.com/Mallika-coder/DriveSafer-AI
@@ -197,6 +197,9 @@ When drowsiness is detected, the system implements **escalating autonomous inter
 | Model validation metrics | **REAL** — from actual 5-fold CV training | `trained_model.json` has same numbers |
 | Your risk score in fleet dashboard | **REAL** — from your webcam session | Open /monitor then check / |
 | Predictive fatigue (minutes to drowsiness) | **REAL** — computed from your score trend | Monitor 2+ minutes |
+| rPPG Heart Rate (camera-based) | **REAL** — detects pulse from landmark depth | See BPM reading on /monitor |
+| Emotion Detection (FACS-based) | **REAL** — geometric classification from landmarks | See emotion state on /monitor |
+| XAI Narrator (natural language) | **REAL** — generates explanations from live signals | See "AI Explanation" panel on /monitor |
 | Training pipeline | **REAL** — Python scripts produce weights | `training/` folder, fully reproducible |
 | Other 4 fleet drivers | **SIMULATED** — realistic behavior patterns for demo | Labeled in UI |
 | Federated learning rounds | **SIMULATION** — demonstrates algorithm, not cross-device | Shows FedAvg math |
@@ -209,7 +212,7 @@ When drowsiness is detected, the system implements **escalating autonomous inter
 | Page | Route | What it does |
 |------|-------|-------------|
 | **Command Center** | `/` | Fleet KPIs, live map with vehicle dots, real-time alert feed |
-| **Live Monitor** | `/monitor` | YOUR webcam → full 17-module ML pipeline running |
+| **Live Monitor** | `/monitor` | YOUR webcam → full 20-module ML pipeline running |
 | **Autocare AI** | `/autocare` | Preventive intervention protocol with simulation scenarios |
 | **Model Validation** | `/validation` | Accuracy metrics, confusion matrix, dataset info, benchmarks |
 | **Analytics** | `/analytics` | Risk trends, alert charts, interactive federated learning |
@@ -221,7 +224,7 @@ When drowsiness is detected, the system implements **escalating autonomous inter
 
 ---
 
-## ML Architecture (17 Modules)
+## ML Architecture (20 Modules)
 
 ```
 Camera (30fps) → MediaPipe FaceMesh (468 landmarks) + COCO-SSD
@@ -243,10 +246,14 @@ Camera (30fps) → MediaPipe FaceMesh (468 landmarks) + COCO-SSD
         ├── Temporal Transformer (30-frame self-attention, 0.12ms inference)
         ├── Adaptive Calibration (baseline ± 2σ, per-driver)
         │
+        ├── rPPG Heart Rate Detector (camera-based pulse, no wearable)
+        ├── Emotion Detector (CALM/STRESSED/ANGRY/SAD from landmarks)
+        ├── XAI Narrator (natural language explanations of AI decisions)
+        │
         ├── Predictive Fatigue (trend + circadian + duration → minutes-to-fatigue)
         ├── Anomaly Detector (Welford's Z-score, 2.5σ threshold)
         ├── Federated Learning (FedAvg + Gaussian noise differential privacy)
-        └── Autocare Protocol (5-level escalating intervention)
+        └── Autocare Protocol (5-level escalating intervention + vehicle telemetry)
 ```
 
 ---
@@ -339,6 +346,11 @@ uvicorn main:app --reload
 6. SAE International (2021). "SAE J3016: Taxonomy and Definitions for Terms Related to Driving Automation Systems."
 7. Euro NCAP (2025). "Assessment Protocol — Safety Assist: Driver Monitoring."
 8. McMahan, B. et al. (2017). "Communication-Efficient Learning of Deep Networks from Decentralized Data." AISTATS (FedAvg).
+9. Poh, M.Z. et al. (2010). "Non-contact, automated cardiac pulse measurements using video imaging and blind source separation." Optics Express.
+10. Verkruysse, W. et al. (2008). "Remote plethysmographic imaging using ambient light." Optics Express.
+11. Ekman, P. (1971). "Universals and cultural differences in facial expressions of emotion." Nebraska Symposium on Motivation.
+12. AAA Foundation for Traffic Safety (2016). "Prevalence of Self-Reported Aggressive Driving Behavior." (Anger = 2.3x accident rate)
+13. Smart Eye AB (2026). "Camera-based remote vital signs monitoring for Driver Monitoring Systems."
 
 ---
 
@@ -355,7 +367,7 @@ DriveSafer-AI/
 ├── frontend/src/
 │   ├── components/    (12) Layout, WebcamFeed, DrivingScene, Gauges, Charts, XAI, A/B
 │   ├── pages/         (10) CommandCenter, Monitor, Autocare, Validation, Fleet, Analytics, Chat, Drivers, History, Settings
-│   ├── utils/         (18) All ML modules — fusion, transformer, FL, anomaly, audio, autocare, validation
+│   ├── utils/         (21) All ML modules — fusion, transformer, FL, anomaly, audio, autocare, validation, rPPG, emotion, XAI
 │   └── hooks/         (3)  useFaceMesh, useObjectDetect, useAlertSound
 ├── backend/
 │   ├── routers/       Sessions, Events, WebSocket, Analytics

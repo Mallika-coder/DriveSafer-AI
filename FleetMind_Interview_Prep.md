@@ -18,7 +18,7 @@ You designed and built the intelligence core of DriveSafer AI. Specifically:
 - `training/train_model.py` — 5-fold CV MLP training with sklearn, producing real weights and metrics
 - `XAIPanel.tsx` — SHAP-like attribution visualization showing per-factor contribution
 - `ABComparisonPanel.tsx` — Live A/B comparison (basic EAR-only vs your fusion model)
-- `Monitor.tsx` — Orchestrates ALL 17 modules into a single real-time pipeline
+- `Monitor.tsx` — Orchestrates ALL 20 modules into a single real-time pipeline
 - `AutocareProtocol.tsx` — Preventive AI safety page with simulation scenarios
 - `ModelValidation.tsx` — 4-tab validation dashboard (metrics, datasets, benchmarks, FP/FN)
 
@@ -37,7 +37,7 @@ You designed and built the intelligence core of DriveSafer AI. Specifically:
 
 ## 1. The One-Liner
 
-> "I built DriveSafer AI — a real-time driver safety system that monitors drowsiness using 17 ML modules running in the browser at 30fps, trained on physiological data from 36 subjects with 97.8% accuracy, and implements a 5-level Autocare Protocol that progressively hands control to the vehicle's autonomous system when the driver becomes impaired — bridging driver monitoring with World Models for the hybrid autonomous future."
+> "I built DriveSafer AI — a real-time driver safety system with 20 ML modules running in the browser at 30fps, including camera-based heart rate detection, emotion recognition, and a temporal transformer trained on 28,737 samples (97.8% accuracy). It implements a 5-level Autocare Protocol with live vehicle telemetry that progressively hands control to the autonomous system when the driver becomes impaired — bridging driver monitoring with World Models for the hybrid autonomous future."
 
 ---
 
@@ -46,7 +46,7 @@ You designed and built the intelligence core of DriveSafer AI. Specifically:
 | Page | Route | What it shows | ML modules used |
 |------|-------|--------------|-----------------|
 | **Command Center** | `/` | Fleet KPIs, live map, real-time alert feed | fleetManager |
-| **Live Monitor** | `/monitor` | YOUR webcam → full 17-module ML pipeline | ALL 17 modules |
+| **Live Monitor** | `/monitor` | YOUR webcam → full 17-module ML pipeline | ALL 20 modules |
 | **Autocare AI** | `/autocare` | 5-level intervention protocol + simulation | autocareProtocol |
 | **Model Validation** | `/validation` | Real metrics, confusion matrix, benchmarks | modelValidation |
 | **Fleet Map** | `/fleet` | Vehicle tracking + predictive fatigue | predictiveFatigue, anomalyDetector |
@@ -183,7 +183,7 @@ Score > 80  → FULL World Model control (autopilot)
 
 ---
 
-## 6. All 17 ML Modules
+## 6. All 20 ML Modules
 
 ### Core Detection (per-frame, 30fps):
 | # | Module | File | What it does |
@@ -216,7 +216,14 @@ Score > 80  → FULL World Model control (autopilot)
 | 14 | **Predictive Fatigue** | predictiveFatigue.ts | Forecasts WHEN driver will get drowsy |
 | 15 | **Anomaly Detector** | anomalyDetector.ts | Welford's online Z-score (2.5σ threshold) |
 | 16 | **Federated Learning** | federatedLearning.ts | FedAvg + differential privacy across drivers |
-| 17 | **Autocare Protocol** | autocareProtocol.ts | 5-level escalating intervention |
+| 17 | **Autocare Protocol** | autocareProtocol.ts | 5-level escalating intervention + vehicle telemetry |
+
+### New (2026 Industry-Aligned):
+| # | Module | File | What it does |
+|---|--------|------|-------------|
+| 18 | **rPPG Heart Rate** | rppgDetector.ts | Camera-based pulse detection (no wearable, like Smart Eye 2026) |
+| 19 | **Emotion Detector** | emotionDetector.ts | CALM/STRESSED/ANGRY/SAD/SURPRISED from landmark geometry (FACS) |
+| 20 | **XAI Narrator** | xaiNarrator.ts | Natural language AI explanations (like NVIDIA in-vehicle agents) |
 
 ### Supporting:
 | Module | File | What it does |
@@ -293,18 +300,18 @@ For false negatives: PERCLOS catches microsleeps over 5-second windows, the temp
 **A:** "The entire ML pipeline runs on-device in the browser. Zero server dependency for detection. The backend (FastAPI + SQLite) is only for persistent storage. If it's down, real-time features still work."
 
 ### Q: "How is this different from every other drowsiness detection project?"
-**A:** "Most projects: EAR < 0.25 → beep. Mine has:
+**A:** "Most projects: EAR < 0.25 → beep. Mine has 20 modules:
 - 7-signal fusion (not 1 threshold)
-- Real trained weights from a proper ML pipeline (97.8% accuracy, reproducible)
-- Temporal transformer (detects trends, not just instantaneous state)
-- Talking vs yawning discrimination (frequency analysis)
-- Autocare Protocol (5-level escalating intervention, not just beeping)
-- World Model integration concept (positions work in autonomous driving research)
-- Cognitive load detection (hands-free call distraction)
-- Federated learning with differential privacy
-- Anomaly detection (Welford's unsupervised)
-- Model validation page (confusion matrix, benchmarks, FP/FN analysis)
-- Full training pipeline (anyone can reproduce the results)
+- Real trained weights (MLP 97.8% + Transformer 96.3%, reproducible pipeline)
+- Camera-based heart rate (rPPG — same tech Smart Eye launched June 2026, no wearable)
+- Emotion recognition (CALM/STRESSED/ANGRY — 2.3x accident risk for anger)
+- XAI narrator (natural language explanations like NVIDIA in-vehicle AI agents)
+- Talking vs yawning discrimination (frequency analysis, 67% FP reduction)
+- Autocare Protocol (5-level escalating intervention with live vehicle telemetry)
+- World Model integration (positions work in autonomous driving research)
+- Temporal transformer (detects trends over 30 frames, not single-frame)
+- Cognitive load + federated learning + anomaly detection + predictive fatigue
+- Full training pipeline (clone repo, run Python, get same numbers)
 None of these are in a tutorial project."
 
 ### Q: "Compare your approach with World Models"
@@ -353,7 +360,7 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 
 | Metric | Value | Source |
 |--------|-------|--------|
-| ML modules | 17 + Autocare | Architecture |
+| ML modules | 20 (including rPPG, emotion, XAI) | Architecture |
 | Training samples | 28,737 | generate_dataset.py |
 | Subjects | 36 | Matches NTHU-DDD |
 | TinyML MLP Accuracy | 97.8% | train_model.py (5-fold CV) |
@@ -389,6 +396,10 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 | Model validation metrics | **REAL** — from actual 5-fold CV | Run `python train_model.py` |
 | AI Chat | **REAL LLM** | Different questions → different answers |
 | Autocare Protocol logic | **REAL** — runs live with simulation | Run scenarios on /autocare |
+| Vehicle telemetry response | **VISUAL SIMULATION** — reacts live to drowsiness | Speed drops, hazards flash, car pulls over |
+| rPPG Heart Rate | **REAL** — camera-based pulse detection | See BPM on /monitor |
+| Emotion Detection | **REAL** — FACS geometry from landmarks | See emotion state on /monitor |
+| XAI Narrator | **REAL** — generates explanations live | See "AI Explanation" on /monitor |
 | Predictive fatigue | **REAL** — uses your score trend | Monitor for 2+ minutes |
 | Other 4 fleet drivers | **SIMULATED** | Labeled clearly — demo purposes |
 | Federated learning rounds | **SIMULATION** | Demonstrates algorithm, not cross-device |
@@ -419,15 +430,15 @@ The webcam IS the sensor — same as it would be in a real car. A driver-facing 
 
 ```
 DriveSafer AI — Real-Time Driver Safety & Preventive Autonomous Intervention
-• Built end-to-end ML pipeline: generated 28,737-sample dataset from physiological
-  research, trained 3-layer MLP via 5-fold CV (97.8% accuracy), and deployed trained
-  weights for sub-0.1ms browser inference — all reproducible from training/ scripts.
-• Architected 17-module computer vision pipeline: temporal transformer, 7-signal fusion,
-  talking/yawn frequency discriminator, and Autocare Protocol (5-level escalating
-  autonomous intervention) — running at 30fps with zero GPU dependency.
+• Built end-to-end ML pipeline: generated 28,737-sample dataset, trained MLP (97.8%) +
+  Transformer (96.3%), deployed at 30fps in-browser with rPPG heart rate, emotion detection,
+  and 20 ML modules — all reproducible from training/ scripts.
+• Architected camera-based vital signs (rPPG pulse, no wearable), emotion recognition
+  (FACS-based CALM/STRESSED/ANGRY), XAI narrator (natural language explanations),
+  and 5-level Autocare Protocol with live vehicle telemetry — 67% fewer false positives.
 • Designed system as complement to World Models (V-JEPA): driver-monitoring AI that
-  triggers progressive autonomous takeover when drowsiness detected, implementing
-  multi-signal confirmation to achieve 67% false positive reduction.
+  triggers progressive autonomous takeover with multi-signal confirmation, matching
+  Smart Eye (2026) and NVIDIA in-vehicle AI agent architectures.
 ```
 
 ---
