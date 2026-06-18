@@ -16,8 +16,11 @@ import { CognitiveLoadDetector } from '../utils/cognitiveLoadDetector';
 import { predictDrowsiness } from '../utils/tinyMLModel';
 import { DriverProfiler } from '../utils/driverProfiling';
 import { fleetManager } from '../utils/fleetManager';
+import { RPPGDetector } from '../utils/rppgDetector';
+import { EmotionDetector } from '../utils/emotionDetector';
+import { generateExplanation } from '../utils/xaiNarrator';
 import axios from 'axios';
-import { Settings, ShieldAlert, Crosshair, Timer } from 'lucide-react';
+import { Settings, ShieldAlert, Crosshair, Timer, Heart, Smile } from 'lucide-react';
 
 interface ChartDataPoint {
   time: number;
@@ -72,9 +75,16 @@ export default function Monitor() {
   const talkingDetector = useRef(new TalkingDetector());
   const cognitiveDetector = useRef(new CognitiveLoadDetector());
   const driverProfiler = useRef(new DriverProfiler());
+  const rppgDetector = useRef(new RPPGDetector());
+  const emotionDetector = useRef(new EmotionDetector());
   const frameCounter = useRef(0);
   const lastFpsTime = useRef(Date.now());
   const sessionStartTime = useRef(Date.now());
+
+  // New feature state
+  const [heartRate, setHeartRate] = useState(0);
+  const [emotion, setEmotion] = useState<{ emotion: string; confidence: number; safetyRisk: number; description: string }>({ emotion: 'CALM', confidence: 0, safetyRisk: 0, description: '' });
+  const [xaiNarrative, setXaiNarrative] = useState('Initializing monitoring...');
 
   // Load calibration on mount and start session
   useEffect(() => {
@@ -186,6 +196,43 @@ export default function Monitor() {
       gazeTracker.current.getStability()
     );
     setMlPrediction(mlResult);
+
+    // rPPG heart rate detection (from landmarks)
+    if (landmarks && landmarks.length > 468) {
+      rppgDetector.current.addFrame(landmarks, null);
+      const rppgResult = rppgDetector.current.getResult();
+      if (rppgResult.isReliable) {
+        setHeartRate(rppgResult.heartRate);
+      }
+    }
+
+    // Emotion detection
+    if (landmarks && landmarks.length > 468) {
+      const emotionResult = emotionDetector.current.detect(landmarks);
+      setEmotion(emotionResult);
+    }
+
+    // XAI Narrative (update every 2 seconds)
+    if (frameCounter.current % 60 === 0) {
+      const narrative = generateExplanation({
+        drowsinessScore: drowsinessResult.score,
+        level: drowsinessResult.level,
+        factors: drowsinessResult.factors,
+        ear: newEar,
+        mar: newMar,
+        perclos: blinkDetector.current.getPERCLOS(),
+        headPitch: headPose.pitch,
+        blinkRate: blinkDetector.current.getBlinkRate(),
+        isTalking: talkResult.isTalking,
+        isYawning: talkResult.isYawning,
+        phoneDetected: isPhone,
+        cognitiveLoad: cogResult.cognitiveLoad,
+        heartRate: heartRate,
+        emotion: emotion.emotion,
+        sessionMinutes: sessionDuration / 60,
+      });
+      setXaiNarrative(narrative);
+    }
 
     // Driver profiling
     driverProfiler.current.recordScore(drowsinessResult.score);
@@ -425,6 +472,36 @@ export default function Monitor() {
                 <span key={ind.label} style={{ fontSize: '11px', padding: '2px 8px', borderRadius: '4px', background: ind.active ? 'rgba(245,158,11,0.1)' : 'var(--bg-tertiary)', color: ind.active ? 'var(--warning)' : 'var(--text-tertiary)', fontWeight: 500 }}>{ind.label}</span>
               ))}
             </div>
+          </div>
+
+          {/* Heart Rate + Emotion */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Heart size={12} style={{ color: 'var(--danger)' }} />
+                <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Heart Rate</span>
+              </div>
+              <span style={{ fontSize: '20px', fontWeight: 700, fontFamily: 'var(--font-mono)', color: heartRate > 0 ? 'var(--text-primary)' : 'var(--text-tertiary)' }}>
+                {heartRate > 0 ? `${heartRate}` : '--'}
+              </span>
+              <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginLeft: '4px' }}>BPM</span>
+            </div>
+            <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
+                <Smile size={12} style={{ color: 'var(--info)' }} />
+                <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Emotion</span>
+              </div>
+              <span style={{ fontSize: '14px', fontWeight: 600, color: emotion.safetyRisk > 30 ? 'var(--warning)' : 'var(--text-primary)' }}>
+                {emotion.emotion}
+              </span>
+              {emotion.safetyRisk > 0 && <span style={{ fontSize: '11px', color: 'var(--text-tertiary)', marginLeft: '6px' }}>Risk: {emotion.safetyRisk}%</span>}
+            </div>
+          </div>
+
+          {/* XAI Narrative */}
+          <div style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '8px', padding: '12px 16px' }}>
+            <span style={{ fontSize: '11px', fontWeight: 500, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '6px' }}>AI Explanation</span>
+            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{xaiNarrative}</p>
           </div>
 
           {/* Risk Factors */}
