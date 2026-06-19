@@ -136,36 +136,34 @@ export class EmotionDetector {
 
   private classifyEmotion(f: ReturnType<typeof this.extractFeatures>): Record<EmotionState, number> {
     // Rule-based classification from FACS (Facial Action Coding System)
-    const calm = 0.3 +
-      (f.mouthCurve > -0.01 && f.mouthCurve < 0.02 ? 0.3 : 0) +
-      (f.browRaise > 0.03 && f.browRaise < 0.06 ? 0.2 : 0) +
-      (f.eyeOpenness > 0.02 && f.eyeOpenness < 0.04 ? 0.2 : 0);
+    // CALM has strong bias — other emotions need CLEAR signals to override
+    const calm = 0.6; // Strong default toward calm
 
+    // Only detect stress with multiple clear indicators
     const stressed =
-      (f.browRaise > 0.055 ? 0.3 : 0) +
-      (f.eyeOpenness > 0.038 ? 0.25 : 0) +
-      (f.jawWidth > 0.35 ? 0.2 : 0) +
-      (f.lipOpen < 0.01 ? 0.25 : 0);
+      (f.browRaise > 0.07 ? 0.2 : 0) +
+      (f.eyeOpenness > 0.045 ? 0.2 : 0) +
+      (f.jawWidth > 0.38 ? 0.15 : 0) +
+      (f.lipOpen < 0.005 ? 0.15 : 0);
 
+    // Anger needs very clear furrowed brows + compressed lips
     const angry =
-      (f.browFurrow < 0.12 ? 0.3 : 0) +
-      (f.eyeOpenness < 0.025 ? 0.25 : 0) +
-      (f.lipOpen < 0.008 ? 0.25 : 0) +
-      (f.mouthCurve < -0.01 ? 0.2 : 0);
+      (f.browFurrow < 0.09 ? 0.25 : 0) +
+      (f.eyeOpenness < 0.02 ? 0.2 : 0) +
+      (f.lipOpen < 0.005 ? 0.2 : 0) +
+      (f.mouthCurve < -0.02 ? 0.2 : 0);
 
+    // Sad needs clear drooping
     const sad =
-      (f.mouthCurve < -0.015 ? 0.35 : 0) +
-      (f.browRaise < 0.035 ? 0.25 : 0) +
-      (f.eyeOpenness < 0.028 ? 0.2 : 0) +
-      (f.lipOpen > 0.005 && f.lipOpen < 0.015 ? 0.2 : 0);
+      (f.mouthCurve < -0.025 ? 0.3 : 0) +
+      (f.browRaise < 0.025 ? 0.2 : 0) +
+      (f.eyeOpenness < 0.022 ? 0.2 : 0);
 
+    // Surprised needs wide eyes + raised brows + open mouth simultaneously
     const surprised =
-      (f.browRaise > 0.065 ? 0.3 : 0) +
-      (f.eyeOpenness > 0.042 ? 0.3 : 0) +
-      (f.lipOpen > 0.025 ? 0.25 : 0) +
-      (f.mouthWidth > 0.3 ? 0.15 : 0);
+      (f.browRaise > 0.08 && f.eyeOpenness > 0.05 && f.lipOpen > 0.03 ? 0.7 : 0);
 
-    // Normalize
+    // Normalize — calm dominates unless another emotion has strong signal
     const total = calm + stressed + angry + sad + surprised + 0.01;
     return {
       CALM: calm / total,

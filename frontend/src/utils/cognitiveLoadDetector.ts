@@ -62,15 +62,18 @@ export class CognitiveLoadDetector {
     const activeConversation = isTalking;
 
     // Compute cognitive load score
+    // Talking alone is NOT distraction — only becomes distraction when
+    // combined with OTHER indicators (reduced blinking + no scanning = phone call trance)
     let score = 0;
     if (reducedBlinking) score += 20;
-    if (fixatedGaze) score += 25;
+    if (fixatedGaze) score += 20;
     if (noScanning) score += 20;
     if (monotoneHead) score += 15;
-    if (activeConversation) score += 20;
+    // Conversation only adds to score if OTHER visual indicators are also present
+    if (activeConversation && (reducedBlinking || noScanning)) score += 15;
 
-    const level = score > 60 ? 'HIGH' : score > 30 ? 'MODERATE' : 'LOW';
-    const distracted = score > 45;
+    const level = score > 65 ? 'HIGH' : score > 40 ? 'MODERATE' : 'LOW';
+    const distracted = score > 55;
 
     return {
       cognitiveLoad: Math.min(100, score),

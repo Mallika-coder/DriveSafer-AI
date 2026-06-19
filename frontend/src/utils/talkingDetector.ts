@@ -146,34 +146,50 @@ export class TalkingDetector {
     return { isTalking, isYawning, confidence: Math.max(0, confidence), frequency, amplitude };
   }
 
-  private detectHandsFreeCall(isTalking: boolean, phoneDetected: boolean, _headRoll: number, timestamp: number): boolean {
-    // Hands-free call indicators:
-    // 1. Sustained talking (>5 seconds)
-    // 2. No phone visible (using earphones/buds)
-    // 3. Optional: slight head tilt bias (common during calls)
+  private detectHandsFreeCall(_isTalking: boolean, phoneDetected: boolean, _headRoll: number, timestamp: number): boolean {
+    // Hands-free call detection — STRICT criteria to avoid false positives:
+    // Requires: sustained talking (>15 seconds) + head tilt bias + no phone
+    // This prevents triggering during: video recording, singing, reading aloud
 
-    const sustainedTalking = this.totalTalkingTime > 5000;
+    const sustainedTalking = this.totalTalkingTime > 15000; // 15 seconds, not 5
     const noPhone = !phoneDetected;
 
-    // Head tilt during call (people often tilt slightly)
+    // Head tilt during call (people tilt head when listening/responding)
     const avgTilt = this.headTiltHistory.length > 0
       ? this.headTiltHistory.reduce((a, b) => a + b, 0) / this.headTiltHistory.length
       : 0;
-    const hasTiltBias = avgTilt > 5;
+    const hasTiltBias = avgTilt > 8; // Needs clear tilt, not just slight
 
-    if (sustainedTalking && noPhone) {
-      if (!this.callStartTime) this.callStartTime = timestamp;
-      return true;
-    }
+    // Only detect call if: talking >15s + head tilt + intermittent pauses (conversation pattern)
+    const hasConversationPattern = this.detectConversationPattern();
 
-    // Also detect if talking pattern + head tilt even if talking is intermittent
-    if (isTalking && noPhone && hasTiltBias && this.totalTalkingTime > 3000) {
+    if (sustainedTalking && noPhone && hasTiltBias && hasConversationPattern) {
       if (!this.callStartTime) this.callStartTime = timestamp;
       return true;
     }
 
     this.callStartTime = null;
     return false;
+  }
+
+  private detectConversationPattern(): boolean {
+    // A real call has talk-pause-talk pattern (you speak, then listen)
+    // Continuous speaking (like recording) doesn't have listening pauses
+    if (this.marHistory.length < 60) return false;
+
+    const recent = this.marHistory.slice(-90);
+    let talkSegments = 0;
+    let silentSegments = 0;
+    let inTalk = false;
+
+    for (const sample of recent) {
+      const aboveBaseline = sample.value > this.userBaselineMAR * 1.2;
+      if (aboveBaseline && !inTalk) { talkSegments++; inTalk = true; }
+      if (!aboveBaseline && inTalk) { silentSegments++; inTalk = false; }
+    }
+
+    // Conversation = at least 3 talk-silence alternations
+    return talkSegments >= 3 && silentSegments >= 2;
   }
 
   getCallDuration(currentTime: number): number {
