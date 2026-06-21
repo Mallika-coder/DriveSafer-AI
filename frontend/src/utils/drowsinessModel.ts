@@ -46,13 +46,13 @@ export function computeDrowsinessScore(input: DrowsinessInput): DrowsinessOutput
   // Head pitch: only counts as drowsiness if severely nodding (>20°), not normal movement
   const headPitchScore = Math.abs(input.headPitch) > 20 ? Math.min((Math.abs(input.headPitch) - 20) * 4, 100) : 0;
 
-  // Blink rate: both too high and too low are indicators
+  // Blink rate: only extreme deviations matter (very low = microsleep risk)
   const normalBlinkRate = 15;
   const blinkDeviation = Math.abs(input.blinkRate - normalBlinkRate);
-  const blinkRateScore = blinkDeviation > 5 ? Math.min(blinkDeviation * 8, 100) : 0;
+  const blinkRateScore = blinkDeviation > 10 ? Math.min((blinkDeviation - 10) * 6, 100) : 0;
 
-  // Gaze stability: erratic gaze = fatigue
-  const gazeScore = (1 - input.gazeStability) * 100;
+  // Gaze stability: only flag if very unstable (< 0.5), normal desk use is 0.6-0.9
+  const gazeScore = input.gazeStability < 0.5 ? Math.min((0.5 - input.gazeStability) * 200, 100) : 0;
 
   const factors = [
     { name: 'PERCLOS', contribution: WEIGHTS.perclos, value: perclosScore },

@@ -136,8 +136,8 @@ export class EmotionDetector {
 
   private classifyEmotion(f: ReturnType<typeof this.extractFeatures>): Record<EmotionState, number> {
     // Rule-based classification from FACS (Facial Action Coding System)
-    // CALM has strong bias — other emotions need CLEAR signals to override
-    const calm = 0.6; // Strong default toward calm
+    // CALM dominates — other emotions need VERY strong signals to override
+    const calm = 0.8;
 
     // Only detect stress with multiple clear indicators
     const stressed =

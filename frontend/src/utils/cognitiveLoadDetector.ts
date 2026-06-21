@@ -97,7 +97,7 @@ export class CognitiveLoadDetector {
 
     const recent = this.gazeVarianceHistory.slice(-30);
     const variance = computeVariance(recent);
-    return variance < 0.001;
+    return variance < 0.0002;
   }
 
   private detectNoScanning(): boolean {
@@ -107,7 +107,7 @@ export class CognitiveLoadDetector {
 
     const yawValues = this.headMovementHistory.map(h => h.yaw);
     const yawRange = Math.max(...yawValues) - Math.min(...yawValues);
-    return yawRange < 3;
+    return yawRange < 1;
   }
 
   private detectMonotoneHead(): boolean {
