@@ -49,11 +49,15 @@ export default function WebcamFeed({ onStatsUpdate }: WebcamFeedProps) {
     if (!ctx) return;
 
     let phoneFound = false;
-    const phoneClasses = ['cell phone', 'remote', 'book'];
+    // COCO-SSD classes that indicate hand-held distraction
+    // 'cell phone' + 'remote' (often misclassifies phone edges as remote)
+    // Lower threshold because sideways/angled phones are harder to detect
+    const phoneClasses = ['cell phone', 'remote'];
     for (const p of predictions) {
-      const isPhone = phoneClasses.includes(p.class) && p.score > 0.5;
-      const isHandHeld = p.class === 'cell phone' && p.score > 0.4;
-      if (isPhone || isHandHeld) {
+      const isPhone = p.class === 'cell phone' && p.score > 0.3;
+      const isRemote = p.class === 'remote' && p.score > 0.35;
+      const isHandHeld = phoneClasses.includes(p.class) && p.score > 0.25 && p.bbox[2] < 300 && p.bbox[3] < 400;
+      if (isPhone || isRemote || isHandHeld) {
         phoneFound = true;
 
         ctx.save();
