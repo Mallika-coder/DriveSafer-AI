@@ -333,9 +333,10 @@ export default function Monitor() {
       cooldownActive.current = true;
       setTimeout(() => {
         setAlertLevel(0);
+        setAlertMsg("");
         stopAlarm();
         cooldownActive.current = false;
-      }, 5000);
+      }, 3000);
     }
   }, [headPose.pitch, headPose.yaw, headPose.isDistracted, marThresh, sessionId, triggerAlert, stopAlarm]);
 
