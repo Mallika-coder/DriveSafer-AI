@@ -26,19 +26,20 @@ const WEIGHTS = {
   gazeStability: 0.07,
 };
 
-function sigmoid(x: number): number {
+function _sigmoid(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }
+void _sigmoid;
 
 export function computeDrowsinessScore(input: DrowsinessInput): DrowsinessOutput {
-  // PERCLOS: percentage of eye closure over time (most researched metric)
-  const perclosScore = sigmoid((input.perclos - 0.15) * 20) * 100;
+  // PERCLOS: only contributes above 15% (the clinical threshold)
+  const perclosScore = input.perclos > 0.15 ? Math.min((input.perclos - 0.15) * 200, 100) : 0;
 
-  // EAR: lower values = more closed eyes
-  const earScore = sigmoid((0.25 - input.ear) * 30) * 100;
+  // EAR: only contributes when eyes are actually closing (below calibrated threshold)
+  const earScore = input.ear < 0.22 ? Math.min((0.22 - input.ear) * 500, 100) : 0;
 
-  // Blink duration: longer blinks = drowsier
-  const blinkDurationScore = sigmoid((input.blinkDuration - 200) / 100) * 100;
+  // Blink duration: only flags when blinks are genuinely long (>300ms = drowsy blinks)
+  const blinkDurationScore = input.blinkDuration > 300 ? Math.min((input.blinkDuration - 300) * 0.5, 100) : 0;
 
   // MAR: yawning indicator
   const marScore = input.mar > 0.6 ? Math.min((input.mar - 0.6) * 250, 100) : 0;

@@ -286,11 +286,8 @@ export default function Monitor() {
       msg = "Hands-free call detected — stay focused on road.";
     }
 
-    // Cognitive distraction (conversation-induced inattention)
-    if (cogResult.distracted && currentLevel < 1) {
-      currentLevel = 1;
-      msg = "Cognitive distraction detected — attention divided.";
-    }
+    // Cognitive distraction — only log, don't trigger banner (too many false positives at desk)
+    // In a real car this would fire, but for demo/desk use it creates noise
 
     // Head pose — only trigger for extreme positions (actually looking away, not desk posture)
     if (headPose.isDistracted && (Math.abs(headPose.pitch) > 30 || Math.abs(headPose.yaw) > 35) && currentLevel < 2) {

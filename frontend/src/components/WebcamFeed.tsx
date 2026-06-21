@@ -49,15 +49,19 @@ export default function WebcamFeed({ onStatsUpdate }: WebcamFeedProps) {
     if (!ctx) return;
 
     let phoneFound = false;
-    // COCO-SSD classes that indicate hand-held distraction
-    // 'cell phone' + 'remote' (often misclassifies phone edges as remote)
-    // Lower threshold because sideways/angled phones are harder to detect
-    const phoneClasses = ['cell phone', 'remote'];
+    // Detect phone/distraction objects from COCO-SSD
+    // Multiple strategies for different holding angles:
+    // 1. Direct 'cell phone' detection (screen visible)
+    // 2. 'remote' class (COCO-SSD often misclassifies phone edges)
+    // 3. Any small rectangular object held near face area
     for (const p of predictions) {
-      const isPhone = p.class === 'cell phone' && p.score > 0.3;
-      const isRemote = p.class === 'remote' && p.score > 0.35;
-      const isHandHeld = phoneClasses.includes(p.class) && p.score > 0.25 && p.bbox[2] < 300 && p.bbox[3] < 400;
-      if (isPhone || isRemote || isHandHeld) {
+      const isPhone = p.class === 'cell phone' && p.score > 0.2;
+      const isRemote = p.class === 'remote' && p.score > 0.25;
+      // Any small handheld object (keyboard, mouse, remote, phone, book)
+      // near the upper half of frame = likely phone distraction
+      const isSmallObject = ['cell phone', 'remote', 'mouse', 'keyboard'].includes(p.class)
+        && p.score > 0.2 && p.bbox[1] < 400;
+      if (isPhone || isRemote || isSmallObject) {
         phoneFound = true;
 
         ctx.save();
