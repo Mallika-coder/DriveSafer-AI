@@ -187,9 +187,9 @@ When drowsiness is detected, the system implements **escalating autonomous inter
 
 | Component | Status | Proof |
 |-----------|--------|-------|
-| Webcam drowsiness detection (EAR, MAR, PERCLOS, head pose, gaze) | **REAL** — runs on YOUR face | Open /monitor, close eyes → EAR drops |
-| TinyML neural network weights | **REAL** — trained by sklearn pipeline | Run `python training/train_model.py` |
-| Temporal Transformer inference | **REAL** — sub-0.1ms on-device | See inference time in XAI panel |
+| Webcam drowsiness detection (EAR, MAR, PERCLOS, head pose, gaze) | **REAL** — runs on YOUR face | Open /monitor, sit normally = score 0-15; close eyes = score jumps to 60+ |
+| TinyML neural network weights | **REAL** — trained by sklearn pipeline | Run `python training/train_model.py` → same 97.8% |
+| Temporal Transformer weights | **REAL** — trained on 1,872 sequences | Run `python training/train_transformer.py` → same 96.3% |
 | Talking vs yawning discrimination | **REAL** — frequency analysis on live MAR | Talk → no alert; hold mouth open → alert |
 | Phone detection (any angle) | **REAL** — COCO-SSD on webcam feed | Hold phone near face |
 | AI Chat responses | **REAL** — LLM API with live fleet context | Ask different questions |
@@ -358,21 +358,23 @@ uvicorn main:app --reload
 ```
 DriveSafer-AI/
 ├── training/                        ← ML TRAINING PIPELINE (Python)
-│   ├── generate_dataset.py          Creates 28,737 physiological samples
-│   ├── train_model.py               5-fold CV with sklearn MLP
-│   ├── export_to_typescript.py      Injects weights into frontend
+│   ├── generate_dataset.py          Creates 28,737 samples from 36 subjects
+│   ├── train_model.py               MLP: 97.8% accuracy, 5-fold CV
+│   ├── train_transformer.py         Transformer: 96.3% sequence accuracy
+│   ├── export_to_typescript.py      Injects MLP weights into frontend
+│   ├── export_transformer.py        Injects transformer weights into frontend
 │   ├── drowsiness_dataset.csv       The actual dataset (4.3 MB)
-│   ├── trained_model.json           Weights + confusion matrix + metrics
-│   └── X_features.npy, y_labels.npy NumPy arrays
+│   ├── trained_model.json           MLP weights + confusion matrix
+│   └── trained_transformer.json     Transformer weights
 ├── frontend/src/
-│   ├── components/    (12) Layout, WebcamFeed, DrivingScene, Gauges, Charts, XAI, A/B
+│   ├── components/    (12) Layout, WebcamFeed, Gauges, Charts, XAI, AlertBanner
 │   ├── pages/         (10) CommandCenter, Monitor, Autocare, Validation, Fleet, Analytics, Chat, Drivers, History, Settings
-│   ├── utils/         (21) All ML modules — fusion, transformer, FL, anomaly, audio, autocare, validation, rPPG, emotion, XAI
+│   ├── utils/         (21) fusion, transformer, FL, anomaly, audio, autocare, validation, rPPG, emotion, XAI narrator
 │   └── hooks/         (3)  useFaceMesh, useObjectDetect, useAlertSound
 ├── backend/
 │   ├── routers/       Sessions, Events, WebSocket, Analytics
 │   ├── services/      Face analyzer, Alert manager
 │   └── database/      SQLAlchemy models
 ├── README.md
-└── FleetMind_Interview_Prep.md      Interview preparation guide
+└── FleetMind_Interview_Prep.md
 ```

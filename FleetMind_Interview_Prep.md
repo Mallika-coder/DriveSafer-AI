@@ -46,7 +46,7 @@ You designed and built the intelligence core of DriveSafer AI. Specifically:
 | Page | Route | What it shows | ML modules used |
 |------|-------|--------------|-----------------|
 | **Command Center** | `/` | Fleet KPIs, live map, real-time alert feed | fleetManager |
-| **Live Monitor** | `/monitor` | YOUR webcam → full 17-module ML pipeline | ALL 20 modules |
+| **Live Monitor** | `/monitor` | YOUR webcam → full 20-module ML pipeline | ALL 20 modules |
 | **Autocare AI** | `/autocare` | 5-level intervention protocol + simulation | autocareProtocol |
 | **Model Validation** | `/validation` | Real metrics, confusion matrix, benchmarks | modelValidation |
 | **Fleet Map** | `/fleet` | Vehicle tracking + predictive fatigue | predictiveFatigue, anomalyDetector |
@@ -443,27 +443,55 @@ DriveSafer AI — Real-Time Driver Safety & Preventive Autonomous Intervention
 
 ---
 
-## 14. Project Structure
+## 14. Video Demo Script (For LinkedIn/Presentations)
+
+**Method:** Record screen silently → add voiceover after in CapCut.
+
+**Voiceover (read over the demo, ~1:45):**
+
+> This is DriveSafer AI. Twenty ML modules analyzing my face in real-time — entirely in the browser, no GPU, no cloud, sixty frames per second.
+>
+> Right now the system is calm. Score is zero. It sees my face, tracks four hundred sixty-eight landmarks, computes EAR, PERCLOS, head pose, emotion — all reading normal. No alert.
+>
+> Now I'm talking — notice the cabin shows TALK. But no yawn alert fires. Our frequency discriminator measures jaw movement above two point five hertz and correctly classifies it as speech. Sixty-seven percent fewer false positives.
+>
+> Now watch — I close my eyes. EAR drops, PERCLOS shoots up, the score jumps to seventy. Warning fires. The temporal transformer detected the trend across thirty frames.
+>
+> Phone distraction — detected the moment I raise it. In a real vehicle, this triggers the Autocare Protocol.
+>
+> Now the Autocare Protocol — five levels of autonomous intervention. Watch the vehicle telemetry. Speed drops from eighty to sixty-five. Lane assist activates. The World Model prediction says: driver incapacitation within two to five minutes.
+>
+> This is the hybrid future — our system monitors the driver, and when it detects impairment, the car's World Model takes over.
+>
+> All backed by real training. Twenty-eight thousand samples, five-fold cross-validation, ninety-seven point eight percent accuracy. Nothing hardcoded. Link below.
+
+---
+
+## 15. Project Structure
 
 ```
 DriveSafer-AI/
-├── training/                    ← ML TRAINING PIPELINE
-│   ├── generate_dataset.py      (creates 28,737 samples)
-│   ├── train_model.py           (5-fold CV, exports weights)
-│   ├── export_to_typescript.py  (injects into frontend)
-│   ├── drowsiness_dataset.csv   (the actual dataset)
-│   ├── trained_model.json       (weights + metrics)
-│   └── X_features.npy, y_labels.npy
+├── training/                        ← ML TRAINING PIPELINE
+│   ├── generate_dataset.py          (creates 28,737 samples from 36 subjects)
+│   ├── train_model.py               (MLP: 97.8% accuracy, 5-fold CV)
+│   ├── train_transformer.py         (Transformer: 96.3% sequence accuracy)
+│   ├── export_to_typescript.py      (injects MLP weights into frontend)
+│   ├── export_transformer.py        (injects transformer weights into frontend)
+│   ├── drowsiness_dataset.csv       (the actual dataset, 4.3 MB)
+│   ├── trained_model.json           (MLP weights + confusion matrix)
+│   └── trained_transformer.json     (transformer weights)
 ├── frontend/src/
-│   ├── components/    (12) Layout, WebcamFeed, DrivingScene, Gauges, Charts, XAI
+│   ├── components/    (12) Layout, WebcamFeed, Gauges, Charts, XAI, AlertBanner
 │   ├── pages/         (10) CommandCenter, Monitor, Autocare, Validation, Fleet, etc.
-│   ├── utils/         (18) All ML modules + autocare + validation
+│   ├── utils/         (21) All ML modules: fusion, transformer, FL, anomaly,
+│   │                       audio, autocare, validation, rPPG, emotion, XAI narrator
 │   └── hooks/         (3)  useFaceMesh, useObjectDetect, useAlertSound
 ├── backend/
 │   ├── routers/       Sessions, Events, WebSocket, Analytics
 │   ├── services/      Face analyzer, Alert manager
 │   └── database/      SQLAlchemy models
-└── README.md          (full documentation with references)
+├── README.md          (full documentation with 13 academic references)
+└── FleetMind_Interview_Prep.md
 ```
 
 ---
