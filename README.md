@@ -1,14 +1,13 @@
 # DriveSafer AI — Intelligent Driver Monitoring & Preventive Safety System
 
-
 An AI-powered driver safety platform that combines real-time computer vision (20 ML modules), temporal transformers, federated learning, and an **Autocare Protocol** for progressive autonomous intervention — all running in the browser at 30+ FPS with no GPU required.
 
 **Live Demo:** https://drive-safer-ai.vercel.app
 **GitHub:** https://github.com/Mallika-coder/DriveSafer-AI
 
-### Demo Video
+## Demo Video
 
-<video src="https://github.com/Mallika-coder/DriveSafer-AI/raw/main/DriveSafer_demo.mp4" controls width="100%"></video>
+https://github.com/Mallika-coder/DriveSafer-AI/raw/main/DriveSafer_demo.mp4
 
 ---
 
