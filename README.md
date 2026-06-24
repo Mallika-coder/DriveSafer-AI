@@ -6,11 +6,10 @@ An AI-powered driver safety platform that combines real-time computer vision (20
 **GitHub:** https://github.com/Mallika-coder/DriveSafer-AI
 
 ## Demo Video
-<video src="(https://github.com/user-attachments/assets/b81acac2-353a-4188-b1ba-df2b2bd0b280)" controls width="100%"></video>
-//https://github.com/user-attachments/assets/b81acac2-353a-4188-b1ba-df2b2bd0b280
+<video src="https://github.com/user-attachments/assets/b81acac2-353a-4188-b1ba-df2b2bd0b280" controls width="100%"></video>
 
 ---
-
+https://github.com/user-attachments/assets/b81acac2-353a-4188-b1ba-df2b2bd0b280
 ## Relation to World Models (V-JEPA / LeCun)
 
 Our system is **complementary** to Yann LeCun's World Model approach (V-JEPA, I-JEPA):
