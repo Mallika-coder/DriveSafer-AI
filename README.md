@@ -7,7 +7,9 @@ An AI-powered driver safety platform that combines real-time computer vision (20
 
 ## Demo Video
 
-https://github.com/Mallika-coder/DriveSafer-AI/raw/main/DriveSafer_demo.mp4
+https://github.com/Mallika-coder/DriveSafer-AI/assets/DriveSafer_demo.mp4
+
+> **[▶ Click here to watch the demo video](https://github.com/Mallika-coder/DriveSafer-AI/blob/main/DriveSafer_demo.mp4)**
 
 ---
 
