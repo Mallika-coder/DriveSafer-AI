@@ -7,6 +7,10 @@ An AI-powered driver safety platform that combines real-time computer vision (20
 **Live Demo:** https://drive-safer-ai.vercel.app
 **GitHub:** https://github.com/Mallika-coder/DriveSafer-AI
 
+### Demo Video
+
+<video src="https://github.com/Mallika-coder/DriveSafer-AI/raw/main/DriveSafer_demo.mp4" controls width="100%"></video>
+
 ---
 
 ## Relation to World Models (V-JEPA / LeCun)
