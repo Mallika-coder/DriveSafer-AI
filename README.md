@@ -1,5 +1,4 @@
 # DriveSafer AI — Intelligent Driver Monitoring & Preventive Safety System
-## Demo Video
 
 
 An AI-powered driver safety platform that combines real-time computer vision (20 ML modules), temporal transformers, federated learning, and an **Autocare Protocol** for progressive autonomous intervention — all running in the browser at 30+ FPS with no GPU required.
